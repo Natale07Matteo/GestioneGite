@@ -80,10 +80,9 @@ if ($ruolo) {
 <?php else: ?>
             <!-- contenuto per utenti loggati -->
             <div class="hero-section">
-                <h1>Benvenuto, <?php echo htmlspecialchars(explode(' ', $nome_utente)[0]); ?></h1>
-                <p>
+                <h1 style="font-size:2.5rem;font-weight:700;margin-bottom:0.5rem;color:var(--blue-700);">Benvenuto, <?php echo htmlspecialchars(explode(' ', $nome_utente)[0]); ?></h1>
+                <p style="font-size:1.15rem;color:#475569;margin-bottom:1.5rem;max-width:600px;">
                     <?php if ($ruolo == 2): ?>
-                        <span class="badge badge-commissione" style="font-size:0.75rem;">Commissione</span>
                         Gestisci le proposte, approva le bozze e organizza le gite scolastiche.
                     <?php else: ?>
                         Proponi nuove gite, organizza quelle approvate e segui lo stato delle tue proposte.
@@ -92,27 +91,27 @@ if ($ruolo) {
             </div>
             <!-- riepilogo numerico -->
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;">
-                <div class="card" style="text-align:center;padding:1.2rem;">
+                <div class="card stat-card" onclick="window.location.href='mieGite.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:var(--blue-600);"><?php echo $totProposte; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Le mie proposte</p>
                 </div>
-                <div class="card" style="text-align:center;padding:1.2rem;">
+                <div class="card stat-card" onclick="window.location.href='mieGite.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:var(--blue-600);"><?php echo $totOrg; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">In organizzazione</p>
                 </div>
-                <div class="card" style="text-align:center;padding:1.2rem;">
+                <div class="card stat-card" onclick="window.location.href='inProgramma.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:var(--blue-600);"><?php echo $totInProgramma; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Gite in programma</p>
                 </div>
                 <?php if ($ruolo == 2): ?>
-                <div class="card" style="text-align:center;padding:1.2rem;">
+                <div class="card stat-card" onclick="window.location.href='elencoBozze.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:<?php echo $totBozze > 0 ? 'var(--hex-orange)' : 'var(--blue-600)'; ?>;"><?php echo $totBozze; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Bozze in attesa</p>
                 </div>
                 <?php endif; ?>
             </div>
             <!-- card navigazione -->
-            <div class="home-grid">
+            <div class="home-grid <?php echo ($ruolo != 2) ? 'grid-3-cols' : ''; ?>">
                 <div class="card">
                     <div class="card-header">
                         <h3>Catalogo Proposte</h3>

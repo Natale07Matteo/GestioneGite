@@ -8,7 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $idGita     = (int)$_POST['id_gita'];
     $nuovoStato = ($_POST['azione'] === 'approva') ? 2 : 3;
     if ($conn->query("UPDATE gita1g SET idStato = $nuovoStato WHERE idGita = $idGita")) {
-        $messaggio = "<div class='alert alert-success'>Operazione completata.</div>";
+        if ($nuovoStato == 2) {
+            $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
+        } else {
+            $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+        }
     } else {
         $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
     }
@@ -19,7 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $idGita     = (int)$_POST['id_gita'];
     $nuovoStato = ($_POST['azione'] === 'approva') ? 2 : 3;
     if ($conn->query("UPDATE gite5 SET idStato = $nuovoStato WHERE idGita = $idGita")) {
-        $messaggio = "<div class='alert alert-success'>Operazione completata.</div>";
+        if ($nuovoStato == 2) {
+            $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
+        } else {
+            $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+        }
     } else {
         $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
     }

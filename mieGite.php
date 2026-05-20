@@ -390,13 +390,13 @@ function badgeClass($stato) {
 
 <?php if ($messaggio === 'disiscritto_ok'): ?>
 <div class="alert alert-success" style="margin-bottom:1rem;">
-    Ti sei disiscritto correttamente dalla gita.
+    Ti sei disiscritto correttamente dalla gita. La trovi in <a href="inProgramma.php" style="color:inherit;text-decoration:underline;font-weight:bold;">In Programma</a>.
 </div>
 <?php endif; ?>
 
 <?php if ($messaggio === 'partecipato_ok'): ?>
 <div class="alert alert-success" style="margin-bottom:1rem;">
-    Ti sei iscritto correttamente alla gita.
+    Ti sei iscritto correttamente alla gita. La trovi ora in <a href="mieGite.php" style="color:inherit;text-decoration:underline;font-weight:bold;">Le mie Gite</a>.
 </div>
 <?php endif; ?>
 
@@ -408,7 +408,7 @@ function badgeClass($stato) {
 
 <?php if (isset($_GET['organizzata'])): ?>
 <div class="alert alert-success" style="margin-bottom:1rem;">
-    Gita messa in organizzazione con successo.
+    Gita messa in organizzazione con successo. La trovi ora in <a href="mieGite.php" style="color:inherit;text-decoration:underline;font-weight:bold;">Le mie Gite</a>.
 </div>
 <?php endif; ?>
 
@@ -454,7 +454,13 @@ function badgeClass($stato) {
         <div class="miegite-card">
             <div class="miegite-card-header">
                 <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
-                <span class="badge <?php echo $badge; ?>"><?php echo $stato; ?></span>
+                <?php
+                if ($riga['tipo'] === '1g') {
+                    echo badgeStatoHtml($riga['idStato'], isset($riga['giorno']) ? $riga['giorno'] : null);
+                } else {
+                    echo badgeStatoHtml($riga['idStato'], isset($riga['giornoInizio']) ? $riga['giornoInizio'] : null, isset($riga['giornoFine']) ? $riga['giornoFine'] : null);
+                }
+                ?>
             </div>
             <div class="miegite-card-body">
                 <div class="miegite-card-info">
@@ -463,7 +469,7 @@ function badgeClass($stato) {
                     <span><strong>Periodo:</strong> <?php echo !empty($periodo) ? $periodo : '—'; ?></span>
                     <span><strong><?php echo $dataLabel; ?>:</strong> <?php echo $data; ?></span>
                     <span><strong>Costo a persona:</strong> <?php echo $costo; ?></span>
-                    <?php if ($descDisp): ?><span><strong>Descrizione:</strong> <?php echo $descDisp; ?></span><?php endif; ?>
+                    <span><strong>Descrizione:</strong> <?php echo $descDisp ? $descDisp : '—'; ?></span>
                 </div>
             </div>
             <?php if ($stato === 'Approvata'): ?>
@@ -552,7 +558,13 @@ function badgeClass($stato) {
         <div class="miegite-card">
             <div class="miegite-card-header">
                 <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
-                <span class="badge <?php echo $badge; ?>"><?php echo $stato; ?></span>
+                <?php
+                if ($riga['tipo'] === '1g') {
+                    echo badgeStatoHtml($riga['idStato'], isset($riga['giorno']) ? $riga['giorno'] : null);
+                } else {
+                    echo badgeStatoHtml($riga['idStato'], isset($riga['giornoInizio']) ? $riga['giornoInizio'] : null, isset($riga['giornoFine']) ? $riga['giornoFine'] : null);
+                }
+                ?>
             </div>
             <div class="miegite-card-body">
                 <div class="miegite-card-info">
@@ -562,7 +574,7 @@ function badgeClass($stato) {
                     <span><strong><?php echo $dataLabel; ?>:</strong> <?php echo $data; ?></span>
                     <span><strong>Costo a persona:</strong> <?php echo $costo; ?></span>
                     <span><strong>Num. alunni:</strong> <?php echo $numAl; ?></span>
-                    <?php if ($descDisp): ?><span><strong>Descrizione:</strong> <?php echo $descDisp; ?></span><?php endif; ?>
+                    <span><strong>Descrizione:</strong> <?php echo $descDisp ? $descDisp : '—'; ?></span>
                     <?php echo $extraInfo; ?>
                 </div>
             </div>
@@ -771,7 +783,7 @@ function badgeClass($stato) {
 </div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Modifiche Salvate</h3>
-    <p style="color:#475569;">I dati della gita sono stati aggiornati con successo.</p>
+    <p style="color:#475569;">I dati della gita sono stati aggiornati con successo. Visualizza in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
 </div>
 <div class="modal-footer" style="justify-content:center;">
     <button class="button" onclick="document.getElementById('modalModOrgOk').classList.add('hidden')">OK</button>
@@ -848,6 +860,7 @@ function badgeClass($stato) {
     <button class="close-btn" onclick="document.getElementById('modalOrg1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form id="formOrg1g" method="POST" action="mieGite.php">
     <input type="hidden" name="action"  value="organizza_1g">
     <input type="hidden" name="id_gita" id="org1g_id">
@@ -857,12 +870,12 @@ function badgeClass($stato) {
             <input type="text" id="org1g_mezzo_dest" class="form-control" readonly>
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="org_descrizione" id="org1g_descrizione" class="form-control" placeholder="Breve descrizione">
+            <label>Descrizione *</label>
+            <input type="text" name="org_descrizione" id="org1g_descrizione" class="form-control" placeholder="Breve descrizione" required>
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="org_mezzo" id="org1g_mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="org_mezzo" id="org1g_mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
@@ -870,12 +883,12 @@ function badgeClass($stato) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="org_periodo" id="org1g_periodo" class="form-control">
+            <label>Periodo *</label>
+            <input type="text" name="org_periodo" id="org1g_periodo" class="form-control" required>
         </div>
         <div class="form-group">
-            <label>Classe/i</label>
-            <input type="text" name="org_classe" id="org1g_classe" class="form-control" placeholder="es. 3A">
+            <label>Classe/i *</label>
+            <input type="text" name="org_classe" id="org1g_classe" class="form-control" placeholder="es. 3A" required>
         </div>
         <div class="form-group">
             <label>Giorno *</label>
@@ -883,20 +896,20 @@ function badgeClass($stato) {
             <small id="org1g_giorno_error" style="color:var(--hex-red);display:block;margin-top:0.25rem;"></small>
         </div>
         <div class="form-group">
-            <label>Costo Mezzo (&euro;)</label>
-            <input type="number" name="org_costoMezzo" id="org1g_costoMezzo" class="form-control" step="0.50" min="0">
+            <label>Costo Mezzo (&euro;) *</label>
+            <input type="number" name="org_costoMezzo" id="org1g_costoMezzo" class="form-control" step="0.50" min="0" required>
         </div>
         <div class="form-group">
-            <label>Costo Giornata (&euro;)</label>
-            <input type="number" name="org_costoGiorno" id="org1g_costoGiorno" class="form-control" step="0.50" min="0">
+            <label>Costo Giornata (&euro;) *</label>
+            <input type="number" name="org_costoGiorno" id="org1g_costoGiorno" class="form-control" step="0.50" min="0" required>
         </div>
         <div class="form-group">
-            <label>Costo a Persona (&euro;)</label>
-            <input type="number" name="org_costoPersona" id="org1g_costoPersona" class="form-control" step="0.50" min="0">
+            <label>Costo a Persona (&euro;) *</label>
+            <input type="number" name="org_costoPersona" id="org1g_costoPersona" class="form-control" step="0.50" min="0" required>
         </div>
         <div class="form-group">
-            <label>Num. Alunni</label>
-            <input type="number" name="org_numAlunni" id="org1g_numAlunni" class="form-control" min="0">
+            <label>Num. Alunni *</label>
+            <input type="number" name="org_numAlunni" id="org1g_numAlunni" class="form-control" min="0" required>
         </div>
     </div>
 </form>
@@ -916,6 +929,7 @@ function badgeClass($stato) {
     <button class="close-btn" onclick="document.getElementById('modalOrg5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form id="formOrg5g" method="POST" action="mieGite.php">
     <input type="hidden" name="action"  value="organizza_5g">
     <input type="hidden" name="id_gita" id="org5g_id">
@@ -925,12 +939,12 @@ function badgeClass($stato) {
             <input type="text" id="org5g_mezzo_dest" class="form-control" readonly>
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="org_descrizione" id="org5g_descrizione" class="form-control" placeholder="Breve descrizione">
+            <label>Descrizione *</label>
+            <input type="text" name="org_descrizione" id="org5g_descrizione" class="form-control" placeholder="Breve descrizione" required>
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="org_mezzo" id="org5g_mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="org_mezzo" id="org5g_mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus GT">Bus GT</option>
                 <option value="Treno">Treno</option>
@@ -938,12 +952,12 @@ function badgeClass($stato) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="org_periodo" id="org5g_periodo" class="form-control">
+            <label>Periodo *</label>
+            <input type="text" name="org_periodo" id="org5g_periodo" class="form-control" required>
         </div>
         <div class="form-group">
-            <label>Classe/i</label>
-            <input type="text" name="org_classe" id="org5g_classe" class="form-control" placeholder="es. 4B">
+            <label>Classe/i *</label>
+            <input type="text" name="org_classe" id="org5g_classe" class="form-control" placeholder="es. 4B" required>
         </div>
         <div class="form-group">
             <label>Giorno Inizio *</label>
@@ -956,12 +970,12 @@ function badgeClass($stato) {
             <small id="org5g_giornoFine_error" style="color:var(--hex-red);display:block;margin-top:0.25rem;"></small>
         </div>
         <div class="form-group">
-            <label>Costo a Persona (&euro;)</label>
-            <input type="number" name="org_costoAPersona" id="org5g_costoAPersona" class="form-control" step="0.50" min="0">
+            <label>Costo a Persona (&euro;) *</label>
+            <input type="number" name="org_costoAPersona" id="org5g_costoAPersona" class="form-control" step="0.50" min="0" required>
         </div>
         <div class="form-group">
-            <label>Num. Alunni</label>
-            <input type="number" name="org_numAlunni" id="org5g_numAlunni" class="form-control" min="0">
+            <label>Num. Alunni *</label>
+            <input type="number" name="org_numAlunni" id="org5g_numAlunni" class="form-control" min="0" required>
         </div>
     </div>
 </form>
@@ -981,7 +995,7 @@ function badgeClass($stato) {
 </div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Gita Organizzata</h3>
-    <p style="color:#475569;">La gita è stata messa in organizzazione con successo.</p>
+    <p style="color:#475569;">La gita è stata messa in organizzazione con successo. La trovi ora in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
 </div>
 <div class="modal-footer" style="justify-content:center;">
     <button class="button" onclick="document.getElementById('modalOrganizzaOk').classList.add('hidden')">OK</button>
@@ -997,7 +1011,7 @@ function badgeClass($stato) {
 </div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Proposta Inviata</h3>
-    <p style="color:#475569;">La gita è stata rimessa in bozza e inviata per approvazione.</p>
+    <p style="color:#475569;">La gita è stata rimessa in bozza e inviata per approvazione. Puoi seguirne lo stato in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
 </div>
 <div class="modal-footer" style="justify-content:center;">
     <button class="button" onclick="document.getElementById('modalRiproponiOk').classList.add('hidden')">OK</button>

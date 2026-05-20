@@ -38,6 +38,26 @@ header h2 {
     margin-top: 2rem;
 }
 
+.home-grid.grid-3-cols {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.15) !important;
+}
+
+@media (max-width: 1024px) {
+    .home-grid.grid-3-cols {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 
 .card-body p {
     color: #333 !important;
@@ -66,7 +86,7 @@ header h2 {
 
 
 @media (max-width: 768px) {
-    .home-grid {
+    .home-grid, .home-grid.grid-3-cols {
         grid-template-columns: 1fr;
     }
 }
@@ -403,3 +423,66 @@ button.btn-boccia:hover, .button.btn-boccia:hover {
     font-size: 0.78rem;
     padding: 0 0.7rem;
 }
+
+/* ── Status badges ── */
+.badge-stato {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.badge-stato::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.badge-stato-bozza {
+    background: #fef3c7;
+    color: #92400e;
+}
+.badge-stato-bozza::before { background: #f59e0b; }
+
+.badge-stato-approvata {
+    background: #d1fae5;
+    color: #065f46;
+}
+.badge-stato-approvata::before { background: #10b981; }
+
+.badge-stato-bocciata {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.badge-stato-bocciata::before { background: #ef4444; }
+
+.badge-stato-programma {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.badge-stato-programma::before { background: #3b82f6; }
+
+.badge-stato-incorso {
+    background: #ccfbf1;
+    color: #115e59;
+}
+.badge-stato-incorso::before { background: #14b8a6; animation: pulse-dot 1.5s infinite; }
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.badge-stato-conclusa {
+    background: #f1f5f9;
+    color: #475569;
+}
+.badge-stato-conclusa::before { background: #94a3b8; }

@@ -1,5 +1,6 @@
 <?php
 include('nav.php');
+include('utils.php');
 
 $ruolo           = isset($_SESSION['ruolo'])     ? $_SESSION['ruolo']     : 0;
 $idUtenteLoggato = isset($_SESSION['id_utente']) ? (int)$_SESSION['id_utente'] : 0;
@@ -105,18 +106,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// query gite 1 giorno
+// query gite 1 giorno (stato 4 = in programma, stato 5 = concluse)
 $res1g = mysqli_query($conn,
     "SELECT g.*, CONCAT(u.Nome, ' ', u.Cognome) AS autore
      FROM gita1g g JOIN utente u ON g.idUtente = u.IDUtente
-     WHERE g.idStato = 4 ORDER BY g.giorno ASC"
+     WHERE g.idStato IN (4, 5) ORDER BY g.idStato ASC, g.giorno ASC"
 );
 
-// query gite piu giorni
+// query gite piu giorni (stato 4 = in programma, stato 5 = concluse)
 $res5g = mysqli_query($conn,
     "SELECT g.*, CONCAT(u.Nome, ' ', u.Cognome) AS autore
      FROM gite5 g JOIN utente u ON g.idUtente = u.IDUtente
-     WHERE g.idStato = 4 ORDER BY g.giornoInizio ASC"
+     WHERE g.idStato IN (4, 5) ORDER BY g.idStato ASC, g.giornoInizio ASC"
 );
 ?>
 <!DOCTYPE html>
@@ -143,16 +144,16 @@ $res5g = mysqli_query($conn,
 
 <?php if (isset($_GET['disiscritto']) && $_GET['disiscritto'] === '1'): ?>
 <div class="alert alert-success" style="margin-bottom:1rem;">
-    Ti sei disiscritto correttamente dalla gita.
+    Ti sei disiscritto correttamente dalla gita. Puoi riscriverti dalla pagina <a href="inProgramma.php" style="color:inherit;text-decoration:underline;font-weight:bold;">In Programma</a>.
 </div>
 <?php endif; ?>
 
 <!-- gite 1 giorno -->
-<h3 style="color:var(--blue-700);margin-bottom:0.75rem;">Gite di un giorno in programma</h3>
+<h3 style="color:var(--blue-700);margin-bottom:0.75rem;">Gite di un giorno</h3>
 <div class="table-section"><div class="table-container">
 <table>
 <thead><tr>
-    <th>Destinazione</th><th>Mezzo</th><th>Classi</th>
+    <th>Destinazione</th><th>Descrizione</th><th>Stato</th><th>Mezzo</th><th>Classi</th>
     <th>Giorno</th><th>Costo/Persona</th><th>N. Alunni</th><th>Docente</th><th>Azioni</th>
 </tr></thead>
 <tbody>
@@ -172,6 +173,7 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
         $costoAV = isset($riga['costoAttivita']) ? $riga['costoAttivita'] : '';
         $costoPA = isset($riga['costoAPersona']) ? $riga['costoAPersona'] : '';
         $dJ      = htmlspecialchars(isset($riga['destinazione']) ? $riga['destinazione'] : '');
+        $descDisp = htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : '');
         // iscritto se è accompagnatore OPPURE se è l'autore della gita
         $chk = mysqli_query($conn,
         "SELECT id
@@ -181,7 +183,9 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
         $isAutore = ($riga['idUtente'] == $idUtenteLoggato);
 ?>
     <tr>
-        <td><?php echo $dest; ?></td>
+        <td style="white-space:normal;"><?php echo $dest; ?></td>
+        <td style="white-space:normal; max-width:200px;"><?php echo $descDisp ? $descDisp : '—'; ?></td>
+        <td><?php echo badgeStatoHtml($riga['idStato'], isset($riga['giorno']) ? $riga['giorno'] : null); ?></td>
         <td><?php echo !empty($mezzo) ? $mezzo : '—'; ?></td>
         <td><?php echo !empty($classi) ? $classi : '—'; ?></td>
         <td><?php echo $giorno; ?></td>
@@ -189,6 +193,7 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
         <td><?php echo !empty($numAl) ? $numAl : '—'; ?></td>
         <td><?php echo $autore; ?></td>
         <td style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;">
+            <?php if ($riga['idStato'] == 4): ?>
             <?php if ($isAccompagnatore): ?>
                 <form method="POST" action="inProgramma.php" style="margin:0;">
                     <input type="hidden" name="action"    value="disiscriviti">
@@ -224,21 +229,24 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
                 data-tab="gita1g"
                 onclick="apriElimina(this)">Elimina</button>
             <?php endif; ?>
+            <?php else: ?>
+                <span style="color:#94a3b8;font-size:0.85rem;">—</span>
+            <?php endif; ?>
         </td>
     </tr>
 <?php endwhile; else: ?>
-    <tr><td colspan="8" style="text-align:center;color:#94a3b8;">Nessuna gita di 1 giorno in organizzazione.</td></tr>
+    <tr><td colspan="9" style="text-align:center;color:#94a3b8;">Nessuna gita di 1 giorno al momento.</td></tr>
 <?php endif; ?>
 </tbody>
 </table>
 </div></div>
 
 <!-- gite piu giorni -->
-<h3 style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte in programma</h3>
+<h3 style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte</h3>
 <div class="table-section"><div class="table-container">
 <table>
 <thead><tr>
-    <th>Destinazione</th><th>Mezzo</th><th>Classi</th>
+    <th>Destinazione</th><th>Descrizione</th><th>Stato</th><th>Mezzo</th><th>Classi</th>
     <th>Dal</th><th>Al</th><th>Costo/Persona</th><th>N. Alunni</th><th>Docente</th><th>Azioni</th>
 </tr></thead>
 <tbody>
@@ -258,13 +266,16 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
         $autore = htmlspecialchars(isset($riga['autore']) ? $riga['autore'] : '');
         $costoPA = isset($riga['costoAPersona']) ? $riga['costoAPersona'] : '';
         $dJ     = htmlspecialchars(isset($riga['destinazione']) ? $riga['destinazione'] : '');
+        $descDisp = htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : '');
         // iscritto se è accompagnatore OPPURE se è l'autore della gita
         $chk = mysqli_query($conn, "SELECT id FROM accompagnatori WHERE idgita=$id AND idutente=$idUtenteLoggato AND tipo_gita='5g'");
         $isAccompagnatore = ($chk && mysqli_num_rows($chk) > 0);
         $isAutore = ($riga['idUtente'] == $idUtenteLoggato);
 ?>
     <tr>
-        <td><?php echo $dest; ?></td>
+        <td style="white-space:normal;"><?php echo $dest; ?></td>
+        <td style="white-space:normal; max-width:200px;"><?php echo $descDisp ? $descDisp : '—'; ?></td>
+        <td><?php echo badgeStatoHtml($riga['idStato'], isset($riga['giornoInizio']) ? $riga['giornoInizio'] : null, isset($riga['giornoFine']) ? $riga['giornoFine'] : null); ?></td>
         <td><?php echo !empty($mezzo) ? $mezzo : '—'; ?></td>
         <td><?php echo !empty($classi) ? $classi : '—'; ?></td>
         <td><?php echo $gi; ?></td>
@@ -273,6 +284,7 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
         <td><?php echo !empty($numAl) ? $numAl : '—'; ?></td>
         <td><?php echo $autore; ?></td>
         <td style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;">
+            <?php if ($riga['idStato'] == 4): ?>
             <?php if ($isAccompagnatore): ?>
                 <form method="POST" action="inProgramma.php" style="margin:0;">
                     <input type="hidden" name="action"    value="disiscriviti">
@@ -307,11 +319,14 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
                 data-tab="gite5"
                 onclick="apriElimina(this)">Elimina</button>
             <?php endif; ?>
+            <?php else: ?>
+                <span style="color:#94a3b8;font-size:0.85rem;">—</span>
+            <?php endif; ?>
         </td>
     </tr>
 <?php endwhile; else: ?>
-    <tr><td colspan="9" style="text-align:center;color:#94a3b8;">
-        Nessuna gita di più giorni in organizzazione.</td></tr>
+    <tr><td colspan="10" style="text-align:center;color:#94a3b8;">
+        Nessuna gita di più giorni al momento.</td></tr>
 <?php endif; ?>
 </tbody>
 </table>

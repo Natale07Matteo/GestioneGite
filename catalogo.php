@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $classi       = $conn->real_escape_string($classi);
 
         if ($conn->query("INSERT INTO gita1g (idUtente, destinazione, descrizione, mezzo, periodo, classi, costoAPersona, idStato) VALUES ($idUtente, '$destinazione', '$descrizione', '$mezzo', '$periodo', '$classi', $costo, 1)")) {
-            $messaggio = "<div class='alert alert-success'>Proposta gita 1 giorno salvata come bozza.</div>";
+            $messaggio = "<div class='alert alert-success'>Proposta gita 1 giorno salvata come bozza in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore durante il salvataggio: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $classi       = $conn->real_escape_string($classi);
 
         if ($conn->query("INSERT INTO gite5 (idUtente, destinazione, descrizione, mezzo, periodo, classi, costoAPersona, idStato) VALUES ($idUtente, '$destinazione', '$descrizione', '$mezzo', '$periodo', '$classi', $costo, 1)")) {
-            $messaggio = "<div class='alert alert-success'>Proposta gita di piu giorni salvata come bozza.</div>";
+            $messaggio = "<div class='alert alert-success'>Proposta gita di piu giorni salvata come bozza in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore durante il salvataggio: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -101,7 +101,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $orig = $conn->query("SELECT * FROM gita1g WHERE idGita = $idGita")->fetch_assoc();
         if ($orig) {
             $dest_s      = $conn->real_escape_string($orig['destinazione']);
-            $desc_s      = $conn->real_escape_string($descrizione);
+            
+            // Check if already organizing
+            $check = $conn->query("SELECT idGita FROM gita1g WHERE idUtente = $idUtente AND destinazione = '$dest_s' AND idStato = 4");
+            if ($check && $check->num_rows > 0) {
+                $messaggio = "<div class='alert alert-warning'>Stai già organizzando questa gita.</div>";
+            } else {
+                $desc_s      = $conn->real_escape_string($descrizione);
             $mezzoTmp    = !empty($mezzo) ? $mezzo : (isset($orig['mezzo']) ? $orig['mezzo'] : '');
             $mezzoFin_s  = $conn->real_escape_string($mezzoTmp);
             $perTmp      = !empty($periodo) ? $periodo : (isset($orig['periodo']) ? $orig['periodo'] : '');
@@ -120,6 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             } else {
                 $messaggio = "<div class='alert alert-error'>Errore: " . htmlspecialchars($conn->error) . "</div>";
             }
+            } // end of check if already organizing
         }
     }
 }
@@ -158,7 +165,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $orig = $conn->query("SELECT * FROM gite5 WHERE idGita = $idGita")->fetch_assoc();
         if ($orig) {
             $dest_s      = $conn->real_escape_string($orig['destinazione']);
-            $desc_s      = $conn->real_escape_string($descrizione);
+            
+            // Check if already organizing
+            $check = $conn->query("SELECT idGita FROM gite5 WHERE idUtente = $idUtente AND destinazione = '$dest_s' AND idStato = 4");
+            if ($check && $check->num_rows > 0) {
+                $messaggio = "<div class='alert alert-warning'>Stai già organizzando questa gita.</div>";
+            } else {
+                $desc_s      = $conn->real_escape_string($descrizione);
             $mezzoTmp    = !empty($mezzo) ? $mezzo : (isset($orig['mezzo']) ? $orig['mezzo'] : '');
             $mezzoFin_s  = $conn->real_escape_string($mezzoTmp);
             $perTmp      = !empty($periodo) ? $periodo : (isset($orig['periodo']) ? $orig['periodo'] : '');
@@ -177,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             } else {
                 $messaggio = "<div class='alert alert-error'>Errore: " . htmlspecialchars($conn->error) . "</div>";
             }
+            } // end of check if already organizing
         }
     }
 }
@@ -192,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $classi       = $conn->real_escape_string(isset($_POST['mod_classi'])       ? $_POST['mod_classi']       : '');
         $costo        = isset($_POST['mod_costo']) ? (float)$_POST['mod_costo'] : 0;
         if ($conn->query("UPDATE gita1g SET destinazione='$destinazione', descrizione='$descrizione', mezzo='$mezzo', periodo='$periodo', classi='$classi', costoAPersona=$costo WHERE idGita=$idGita")) {
-            $messaggio = "<div class='alert alert-success'>Gita 1 giorno modificata.</div>";
+            $messaggio = "<div class='alert alert-success'>Gita 1 giorno modificata. Visualizza in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore modifica: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -204,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($_SESSION['ruolo'] == 2) {
         $idGita = (int)$_POST['id_gita'];
         if ($conn->query("DELETE FROM gita1g WHERE idGita=$idGita")) {
-            $messaggio = "<div class='alert alert-success'>Gita 1 giorno eliminata.</div>";
+            $messaggio = "<div class='alert alert-success'>Gita 1 giorno eliminata dal <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Catalogo Proposte</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore eliminazione: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -222,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $classi       = $conn->real_escape_string(isset($_POST['mod_classi'])       ? $_POST['mod_classi']       : '');
         $costo        = isset($_POST['mod_costo']) ? (float)$_POST['mod_costo'] : 0;
         if ($conn->query("UPDATE gite5 SET destinazione='$destinazione', descrizione='$descrizione', mezzo='$mezzo', periodo='$periodo', classi='$classi', costoAPersona=$costo WHERE idGita=$idGita")) {
-            $messaggio = "<div class='alert alert-success'>Gita di più giorni modificata.</div>";
+            $messaggio = "<div class='alert alert-success'>Gita di più giorni modificata. Visualizza in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore modifica: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -234,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($_SESSION['ruolo'] == 2) {
         $idGita = (int)$_POST['id_gita'];
         if ($conn->query("DELETE FROM gite5 WHERE idGita=$idGita")) {
-            $messaggio = "<div class='alert alert-success'>Gita di più giorni eliminata.</div>";
+            $messaggio = "<div class='alert alert-success'>Gita di più giorni eliminata dal <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Catalogo Proposte</a>.</div>";
         } else {
             $messaggio = "<div class='alert alert-error'>Errore eliminazione: " . htmlspecialchars($conn->error) . "</div>";
         }
@@ -584,6 +598,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
     <button class="close-btn" onclick="document.getElementById('modal1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form method="POST" action="catalogo.php" id="form1g">
     <input type="hidden" name="action" value="nuova_1g">
     <div class="form-grid">
@@ -592,12 +607,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <input type="text" name="destinazione" class="form-control" required placeholder="es. Roma">
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="descrizione" class="form-control" placeholder="Breve descrizione della gita">
+            <label>Descrizione *</label>
+            <input type="text" name="descrizione" class="form-control" required placeholder="Breve descrizione della gita">
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
@@ -605,12 +620,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="periodo" class="form-control" placeholder="es. Marzo 2026">
+            <label>Periodo *</label>
+            <input type="text" name="periodo" class="form-control" required placeholder="es. Marzo 2026">
         </div>
         <div class="form-group">
-            <label>Classi consigliate</label>
-            <input type="text" name="classi" class="form-control" placeholder="es. 3A, 3B">
+            <label>Classi consigliate *</label>
+            <input type="text" name="classi" class="form-control" required placeholder="es. 3A, 3B">
         </div>
         <div class="form-group">
             <label>Costo a persona (&euro;) *</label>
@@ -635,6 +650,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
     <button class="close-btn" onclick="document.getElementById('modal5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form method="POST" action="catalogo.php" id="form5g">
     <input type="hidden" name="action" value="nuova_5g">
     <div class="form-grid">
@@ -643,12 +659,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <input type="text" name="destinazione" class="form-control" required placeholder="es. Parigi">
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="descrizione" class="form-control" placeholder="Breve descrizione della gita">
+            <label>Descrizione *</label>
+            <input type="text" name="descrizione" class="form-control" required placeholder="Breve descrizione della gita">
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus GT">Bus GT</option>
                 <option value="Treno">Treno</option>
@@ -656,12 +672,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="periodo" class="form-control" placeholder="es. Maggio 2026">
+            <label>Periodo *</label>
+            <input type="text" name="periodo" class="form-control" required placeholder="es. Maggio 2026">
         </div>
         <div class="form-group">
-            <label>Classe/i</label>
-            <input type="text" name="classi" class="form-control" placeholder="es. 4A, 4B">
+            <label>Classe/i *</label>
+            <input type="text" name="classi" class="form-control" required placeholder="es. 4A, 4B">
         </div>
         <div class="form-group">
             <label>Costo a persona (&euro;) *</label>
@@ -686,6 +702,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
     <button class="close-btn" onclick="document.getElementById('modalOrg1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form method="POST" action="catalogo.php" id="formOrg1g">
     <input type="hidden" name="action"   value="organizza_1g">
     <input type="hidden" name="id_gita"  id="org1g_id">
@@ -695,12 +712,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <input type="text" name="org_mezzo_dest" id="org1g_mezzo_dest" class="form-control" readonly style="background:#f3f4f6;">
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="org_descrizione" id="org1g_descrizione" class="form-control" placeholder="Breve descrizione">
+            <label>Descrizione *</label>
+            <input type="text" name="org_descrizione" id="org1g_descrizione" class="form-control" placeholder="Breve descrizione" required>
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="org_mezzo" id="org1g_mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="org_mezzo" id="org1g_mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
@@ -708,33 +725,33 @@ if ($gite5g && $gite5g->num_rows > 0) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="org_periodo" id="org1g_periodo" class="form-control" placeholder="es. Aprile 2026">
+            <label>Periodo *</label>
+            <input type="text" name="org_periodo" id="org1g_periodo" class="form-control" placeholder="es. Aprile 2026" required>
         </div>
         <div class="form-group">
-            <label>Classe/i</label>
-            <input type="text" name="org_classe" id="org1g_classe" class="form-control" placeholder="es. 3A">
+            <label>Classe/i *</label>
+            <input type="text" name="org_classe" id="org1g_classe" class="form-control" placeholder="es. 3A" required>
         </div>
         <div class="form-group">
-            <label>Costo a Persona (&euro;)</label>
-            <input type="number" name="org_costoAPersona" id="org1g_costoPersona" class="form-control" step="0.50" min="0" placeholder="es. 45.00">
+            <label>Costo a Persona (&euro;) *</label>
+            <input type="number" name="org_costoAPersona" id="org1g_costoPersona" class="form-control" step="0.50" min="0" placeholder="es. 45.00" required>
         </div>
         <div class="form-group">
-            <label>Giorno</label>
-            <input type="date" name="org_giorno" id="org1g_giorno" class="form-control" max="2030-12-31">
+            <label>Giorno *</label>
+            <input type="date" name="org_giorno" id="org1g_giorno" class="form-control" max="2030-12-31" required>
             <small id="org1g_giorno_error" style="color:var(--hex-red);display:block;margin-top:0.25rem;"></small>
         </div>
         <div class="form-group">
-            <label>Costo Mezzo (&euro;)</label>
-            <input type="number" name="org_costoMezzo" id="org1g_costoMezzo" class="form-control" step="0.50" min="0" placeholder="es. 200.00">
+            <label>Costo Mezzo (&euro;) *</label>
+            <input type="number" name="org_costoMezzo" id="org1g_costoMezzo" class="form-control" step="0.50" min="0" placeholder="es. 200.00" required>
         </div>
         <div class="form-group">
-            <label>Costo Attività/Giorno (&euro;)</label>
-            <input type="number" name="org_costoGiorno" id="org1g_costoGiorno" class="form-control" step="0.50" min="0" placeholder="es. 15.00">
+            <label>Costo Attività/Giorno (&euro;) *</label>
+            <input type="number" name="org_costoGiorno" id="org1g_costoGiorno" class="form-control" step="0.50" min="0" placeholder="es. 15.00" required>
         </div>
         <div class="form-group">
-            <label>Num. Alunni</label>
-            <input type="number" name="org_numAlunni" id="org1g_numAlunni" class="form-control" min="0" placeholder="es. 25">
+            <label>Num. Alunni *</label>
+            <input type="number" name="org_numAlunni" id="org1g_numAlunni" class="form-control" min="0" placeholder="es. 25" required>
         </div>
     </div>
 </form>
@@ -755,6 +772,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
     <button class="close-btn" onclick="document.getElementById('modalOrg5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
+<p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
 <form method="POST" action="catalogo.php" id="formOrg5g">
     <input type="hidden" name="action"   value="organizza_5g">
     <input type="hidden" name="id_gita"  id="org5g_id">
@@ -764,12 +782,12 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <input type="text" id="org5g_mezzo_dest" class="form-control" readonly style="background:#f3f4f6;">
         </div>
         <div class="form-group">
-            <label>Descrizione</label>
-            <input type="text" name="org_descrizione" id="org5g_descrizione" class="form-control" placeholder="Breve descrizione">
+            <label>Descrizione *</label>
+            <input type="text" name="org_descrizione" id="org5g_descrizione" class="form-control" placeholder="Breve descrizione" required>
         </div>
         <div class="form-group">
-            <label>Mezzo di trasporto</label>
-            <select name="org_mezzo" id="org5g_mezzo" class="form-control">
+            <label>Mezzo di trasporto *</label>
+            <select name="org_mezzo" id="org5g_mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
                 <option value="Bus GT">Bus GT</option>
                 <option value="Treno">Treno</option>
@@ -777,30 +795,30 @@ if ($gite5g && $gite5g->num_rows > 0) {
             </select>
         </div>
         <div class="form-group">
-            <label>Periodo</label>
-            <input type="text" name="org_periodo" id="org5g_periodo" class="form-control" placeholder="es. Maggio 2026">
+            <label>Periodo *</label>
+            <input type="text" name="org_periodo" id="org5g_periodo" class="form-control" placeholder="es. Maggio 2026" required>
         </div>
         <div class="form-group">
-            <label>Classe/i</label>
-            <input type="text" name="org_classe" id="org5g_classe" class="form-control" placeholder="es. 4A">
+            <label>Classe/i *</label>
+            <input type="text" name="org_classe" id="org5g_classe" class="form-control" placeholder="es. 4A" required>
         </div>
         <div class="form-group">
-            <label>Costo a Persona (&euro;)</label>
-            <input type="number" name="org_costoAPersona" id="org5g_costoAPersona" class="form-control" step="0.50" min="0" placeholder="es. 350.00">
+            <label>Costo a Persona (&euro;) *</label>
+            <input type="number" name="org_costoAPersona" id="org5g_costoAPersona" class="form-control" step="0.50" min="0" placeholder="es. 350.00" required>
         </div>
         <div class="form-group">
-            <label>Giorno Inizio</label>
-            <input type="date" name="org_giornoInizio" id="org5g_giornoInizio" class="form-control" max="2030-12-31">
+            <label>Giorno Inizio *</label>
+            <input type="date" name="org_giornoInizio" id="org5g_giornoInizio" class="form-control" max="2030-12-31" required>
             <small id="org5g_giornoInizio_error" style="color:var(--hex-red);display:block;margin-top:0.25rem;"></small>
         </div>
         <div class="form-group">
-            <label>Giorno Fine</label>
-            <input type="date" name="org_giornoFine" id="org5g_giornoFine" class="form-control" max="2030-12-31">
+            <label>Giorno Fine *</label>
+            <input type="date" name="org_giornoFine" id="org5g_giornoFine" class="form-control" max="2030-12-31" required>
             <small id="org5g_giornoFine_error" style="color:var(--hex-red);display:block;margin-top:0.25rem;"></small>
         </div>
         <div class="form-group">
-            <label>Num. Alunni</label>
-            <input type="number" name="org_numAlunni" id="org5g_numAlunni" class="form-control" min="0" placeholder="es. 50">
+            <label>Num. Alunni *</label>
+            <input type="number" name="org_numAlunni" id="org5g_numAlunni" class="form-control" min="0" placeholder="es. 50" required>
         </div>
     </div>
 </form>
