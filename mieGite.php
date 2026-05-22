@@ -246,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $mezzo        = $conn->real_escape_string(isset($_POST['mezzo']) ? $_POST['mezzo'] : '');
         $periodo      = $conn->real_escape_string(isset($_POST['periodo']) ? $_POST['periodo'] : '');
         $costo        = isset($_POST['costo']) ? (float)$_POST['costo'] : 0;
-        $conn->query("UPDATE gita1g SET destinazione='$destinazione', mezzo='$mezzo', periodo='$periodo', costoAPersona=$costo, idStato=1 WHERE idGita=$idGita AND idUtente=$idUtenteLoggato");
+        $conn->query("UPDATE gita1g SET destinazione='$destinazione', mezzo='$mezzo', periodo='$periodo', costoAPersona=$costo, idStato=1, motivazione=NULL WHERE idGita=$idGita AND idUtente=$idUtenteLoggato");
         $messaggio = "ok";
     }
 
@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $mezzo        = $conn->real_escape_string(isset($_POST['mezzo']) ? $_POST['mezzo'] : '');
         $periodo      = $conn->real_escape_string(isset($_POST['periodo']) ? $_POST['periodo'] : '');
         $costo        = isset($_POST['costo']) ? (float)$_POST['costo'] : 0;
-        $conn->query("UPDATE gite5 SET destinazione='$destinazione', mezzo='$mezzo', periodo='$periodo', costoAPersona=$costo, idStato=1 WHERE idGita=$idGita AND idUtente=$idUtenteLoggato");
+        $conn->query("UPDATE gite5 SET destinazione='$destinazione', mezzo='$mezzo', periodo='$periodo', costoAPersona=$costo, idStato=1, motivazione=NULL WHERE idGita=$idGita AND idUtente=$idUtenteLoggato");
         $messaggio = "ok";
     }
 
@@ -470,6 +470,11 @@ function badgeClass($stato) {
                     <span><strong><?php echo $dataLabel; ?>:</strong> <?php echo $data; ?></span>
                     <span><strong>Costo a persona:</strong> <?php echo $costo; ?></span>
                     <span><strong>Descrizione:</strong> <?php echo $descDisp ? $descDisp : '—'; ?></span>
+                    <?php if ($riga['idStato'] == 3 && !empty($riga['motivazione'])): ?>
+                        <div style="margin-top:0.75rem; padding:0.6rem 0.8rem; background:rgba(239,68,68,0.08); border-left:3px solid var(--hex-red); border-radius:6px; font-size:0.88rem; color:#b91c1c; text-align:left;">
+                            <strong>Motivo bocciatura:</strong> <?php echo htmlspecialchars($riga['motivazione']); ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php if ($stato === 'Approvata'): ?>

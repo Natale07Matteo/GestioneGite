@@ -5,9 +5,11 @@ $messaggio = "";
 
 // azioni approva e boccia gita 1 giorno
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'azione_1g') {
-    $idGita     = (int)$_POST['id_gita'];
-    $nuovoStato = ($_POST['azione'] === 'approva') ? 2 : 3;
-    if ($conn->query("UPDATE gita1g SET idStato = $nuovoStato WHERE idGita = $idGita")) {
+    $idGita      = (int)$_POST['id_gita'];
+    $nuovoStato  = ($_POST['azione'] === 'approva') ? 2 : 3;
+    $motivazione = isset($_POST['motivazione']) ? mysqli_real_escape_string($conn, trim($_POST['motivazione'])) : '';
+    $motivazioneSql = ($nuovoStato == 3 && $motivazione !== '') ? "'$motivazione'" : "NULL";
+    if ($conn->query("UPDATE gita1g SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
         if ($nuovoStato == 2) {
             $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
         } else {
@@ -20,9 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // azioni approva e boccia gita 5 giorni
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'azione_5g') {
-    $idGita     = (int)$_POST['id_gita'];
-    $nuovoStato = ($_POST['azione'] === 'approva') ? 2 : 3;
-    if ($conn->query("UPDATE gite5 SET idStato = $nuovoStato WHERE idGita = $idGita")) {
+    $idGita      = (int)$_POST['id_gita'];
+    $nuovoStato  = ($_POST['azione'] === 'approva') ? 2 : 3;
+    $motivazione = isset($_POST['motivazione']) ? mysqli_real_escape_string($conn, trim($_POST['motivazione'])) : '';
+    $motivazioneSql = ($nuovoStato == 3 && $motivazione !== '') ? "'$motivazione'" : "NULL";
+    if ($conn->query("UPDATE gite5 SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
         if ($nuovoStato == 2) {
             $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
         } else {
@@ -82,6 +86,18 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
         document.getElementById('confAzione').value       = azione;
         document.getElementById('confTabella').value      = tabella;
 
+        var motivoContainer = document.getElementById('motivoContainer');
+        var motivoTextarea  = document.getElementById('confMotivazione');
+
+        if (azione === 'boccia') {
+            motivoContainer.style.display = 'block';
+            motivoTextarea.setAttribute('required', 'required');
+            motivoTextarea.value = '';
+        } else {
+            motivoContainer.style.display = 'none';
+            motivoTextarea.removeAttribute('required');
+        }
+
         var btnConf = document.getElementById('btnConferma');
         btnConf.className = azione === 'approva' ? 'button' : 'button cancel';
 
@@ -97,6 +113,21 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
 <main class="content bozze-padding">
 
 <?php echo $messaggio; ?>
+
+<div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem;">
+    <div class="search-bar-wrapper" style="margin-bottom: 0; max-width: 380px; width: 100%;">
+        <input type="text" id="cercaBozze" onkeyup="cercaInTabelle('cercaBozze', 'table')" placeholder="Cerca destinazione, mezzo, docente...">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path d="M784-120 533-371q-30 24-74 37.5T367-320q-101 0-171-70t-70-171q0-101 70-171t171-70q101 0 171 70t70 171q0 48-13.5 92T533-533l251 251-50 50ZM367-400q67 0 113.5-46.5T527-560q0-67-46.5-113.5T367-720q-67 0-113.5 46.5T207-560q0 67 46.5 113.5T367-400Z"/>
+        </svg>
+    </div>
+    <a href="#gite-quinte" class="button outline" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: 99px; padding: 0.6rem 1.2rem; font-size: 0.88rem; transition: all 0.2s ease; height: auto; min-width: 0; line-height: 1;">
+        <span>vai a gite per le quinte</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/>
+        </svg>
+    </a>
+</div>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
     <h3 style="color:var(--blue-700);margin:0;">Bozze gite di un giorno</h3>
@@ -128,10 +159,10 @@ if ($bozze1g && $bozze1g->num_rows > 0) {
             <td>$per</td>
             <td>&euro; $costo</td>
             <td>$autore</td>
-            <td style='display:flex;gap:0.4rem;'>
+            <td><div class='azioni-cell'>
                 <button type='button' class='button xs'        onclick=\"apriConferma($id,'approva','azione_1g','$dest')\">Approva</button>
                 <button type='button' class='button cancel xs' onclick=\"apriConferma($id,'boccia','azione_1g','$dest')\">Boccia</button>
-            </td>
+            </div></td>
         </tr>";
     }
 } else {
@@ -142,7 +173,7 @@ if ($bozze1g && $bozze1g->num_rows > 0) {
 </table>
 </div></div>
 
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+<div id="gite-quinte" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem; scroll-margin-top: 5rem;">
     <h3 style="color:var(--blue-700);margin:0;">Bozze gite per le quinte</h3>
 </div>
 
@@ -172,10 +203,10 @@ if ($bozze5g && $bozze5g->num_rows > 0) {
             <td>$per</td>
             <td>&euro; $costo</td>
             <td>$autore</td>
-            <td style='display:flex;gap:0.4rem;'>
+            <td><div class='azioni-cell'>
                 <button type='button' class='button xs'        onclick=\"apriConferma($id,'approva','azione_5g','$dest')\">Approva</button>
                 <button type='button' class='button cancel xs' onclick=\"apriConferma($id,'boccia','azione_5g','$dest')\">Boccia</button>
-            </td>
+            </div></td>
         </tr>";
     }
 } else {
@@ -190,27 +221,30 @@ if ($bozze5g && $bozze5g->num_rows > 0) {
 
 <!-- modal conferma approva boccia -->
 <div class="modal-overlay hidden" id="modalConferma">
-<div class="modal" style="max-width:400px;text-align:center;">
+<div class="modal" style="max-width:450px;text-align:center;">
 <div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudiConferma()">&times;</button>
+    <button type="button" class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudiConferma()">&times;</button>
 </div>
-<div class="modal-body" style="padding-top:0.5rem;">
-    <h3 id="confTitolo" style="margin-bottom:0.5rem;">Conferma</h3>
-    <p id="confTesto" style="color:var(--blue-900);font-size:1rem;margin-bottom:0.5rem;"></p>
-</div>
-<div class="modal-footer" style="justify-content:center;">
-    <button class="button cancel-outline" onclick="chiudiConferma()">Annulla</button>
-    <button class="button" id="btnConferma" onclick="document.getElementById('formConferma').submit()">Conferma</button>
-</div>
-</div>
-</div>
-
-<!-- form nascosto per invio post -->
-<form method="POST" id="formConferma" style="display:none;">
+<form method="POST" id="formConferma" style="margin:0;">
     <input type="hidden" name="action"   id="confTabella">
     <input type="hidden" name="id_gita"  id="confIdGita">
     <input type="hidden" name="azione"   id="confAzione">
+    <div class="modal-body" style="padding-top:0.5rem; text-align: left;">
+        <h3 id="confTitolo" style="margin-bottom:0.5rem; text-align: center;">Conferma</h3>
+        <p id="confTesto" style="color:var(--blue-900);font-size:1rem;margin-bottom:0.5rem; text-align: center;"></p>
+        
+        <div id="motivoContainer" style="margin-top: 1.2rem; display: none;">
+            <label style="font-weight: 600; color: var(--blue-700); margin-bottom: 0.35rem; display: block;">Motivazione Bocciatura *</label>
+            <textarea name="motivazione" id="confMotivazione" class="form-control" style="width: 100%; height: 80px; resize: none; border-radius: 8px; padding: 0.5rem; border: 1px solid var(--blue-200);" placeholder="es. Budget insufficiente, date non disponibili..."></textarea>
+        </div>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+        <button type="button" class="button cancel-outline" onclick="chiudiConferma()">Annulla</button>
+        <button type="submit" class="button" id="btnConferma">Conferma</button>
+    </div>
 </form>
+</div>
+</div>
 
 <footer><div class="footer-container"><div class="footer-left"><p><strong>Gestione Gite Scolastiche</strong></p></div></div></footer>
 </div><!-- /container -->

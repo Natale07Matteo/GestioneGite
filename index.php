@@ -114,13 +114,13 @@ if ($ruolo) {
             <div class="home-grid <?php echo ($ruolo != 2) ? 'grid-3-cols' : ''; ?>">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Catalogo Proposte</h3>
+                        <h3>Proposte</h3>
                     </div>
                     <div class="card-body">
                         <p>Consulta le proposte approvate e organizza una nuova gita.</p>
                     </div>
                     <div class="card-footer">
-                        <a href="catalogo.php" class="button">Vai al Catalogo</a>
+                        <a href="catalogo.php" class="button">Vai alle Proposte</a>
                     </div>
                 </div>
                 <div class="card">

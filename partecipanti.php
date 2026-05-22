@@ -42,9 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $scadenza  = trim(isset($_POST['scadenza']) ? $_POST['scadenza'] : '');
     $scadenza_s = $scadenza ? "'$scadenza'" : 'NULL';
 
+    $nDocCleaned = strtoupper(str_replace([' ', '-'], '', $nDoc));
+    $today = date('Y-m-d');
+
     if ($nome !== '' && $cognome !== '' && $classe !== '' && $documento !== '' && $nDoc !== '' && $scadenza !== '') {
-        $sql = "INSERT INTO partecipanti (idgita, nome, cognome, classe, descrizione, documento, nDocumento, scadenza) VALUES ($idGita, '$nome', '$cognome', '$classe', '$note', '$documento', '$nDoc', $scadenza_s)";
-        $messaggio = mysqli_query($conn, $sql) ? 'ok' : 'error';
+        if ($scadenza < $today) {
+            $messaggio = 'scaduto';
+        } elseif (!preg_match('/^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/', $nDocCleaned)) {
+            $messaggio = 'formato';
+        } else {
+            $sql = "INSERT INTO partecipanti (idgita, nome, cognome, classe, descrizione, documento, nDocumento, scadenza) VALUES ($idGita, '$nome', '$cognome', '$classe', '$note', '$documento', '$nDocCleaned', $scadenza_s)";
+            $messaggio = mysqli_query($conn, $sql) ? 'ok' : 'error';
+        }
     } else {
         $messaggio = 'campi';
     }
@@ -78,8 +87,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $scadenza  = trim(isset($_POST['acc_scadenza']) ? $_POST['acc_scadenza'] : '');
     $scadenza_s = $scadenza ? "'$scadenza'" : 'NULL';
     $note      = mysqli_real_escape_string($conn, trim(isset($_POST['acc_note']) ? $_POST['acc_note'] : ''));
+    
+    $nDocCleaned = strtoupper(str_replace([' ', '-'], '', $nDoc));
+    $today = date('Y-m-d');
+    
     if ($accId > 0) {
-        mysqli_query($conn, "UPDATE accompagnatori SET documento='$documento', nDocumento='$nDoc', scadenza=$scadenza_s, note='$note' WHERE id=$accId AND idgita=$idGita");
+        if ($scadenza !== '' && $scadenza < $today) {
+            header("Location: partecipanti.php?id=$idGita&err_acc=scaduto");
+            exit;
+        } elseif ($nDoc !== '' && !preg_match('/^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/', $nDocCleaned)) {
+            header("Location: partecipanti.php?id=$idGita&err_acc=formato");
+            exit;
+        } else {
+            mysqli_query($conn, "UPDATE accompagnatori SET documento='$documento', nDocumento='$nDocCleaned', scadenza=$scadenza_s, note='$note' WHERE id=$accId AND idgita=$idGita");
+        }
     }
     header("Location: partecipanti.php?id=$idGita&acc=1");
     exit;
@@ -141,6 +162,12 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
         <div class="alert alert-success" style="margin-bottom:1rem;">Dati accompagnatore aggiornati.</div>
     <?php elseif (isset($_GET['rem_acc']) && $_GET['rem_acc'] === '1'): ?>
         <div class="alert alert-success" style="margin-bottom:1rem;">Accompagnatore rimosso con successo.</div>
+    <?php elseif (isset($_GET['err_acc'])): ?>
+        <?php if ($_GET['err_acc'] === 'scaduto'): ?>
+            <div class="alert alert-error" style="margin-bottom:1rem;">La data di scadenza del documento dell'accompagnatore deve essere nel futuro.</div>
+        <?php elseif ($_GET['err_acc'] === 'formato'): ?>
+            <div class="alert alert-error" style="margin-bottom:1rem;">Il formato del numero di documento dell'accompagnatore non è valido (es. CA12345AA o AB1234567).</div>
+        <?php endif; ?>
     <?php endif; ?>
     <?php if ($messaggio === 'ok'): ?>
         <div class="alert alert-success" style="margin-bottom:1rem;">Partecipante aggiunto con successo.</div>
@@ -148,6 +175,10 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
         <div class="alert alert-error" style="margin-bottom:1rem;">Errore durante l'inserimento. Riprova.</div>
     <?php elseif ($messaggio === 'campi'): ?>
         <div class="alert alert-warning" style="margin-bottom:1rem;">Compila tutti i campi obbligatori.</div>
+    <?php elseif ($messaggio === 'scaduto'): ?>
+        <div class="alert alert-error" style="margin-bottom:1rem;">La data di scadenza del documento deve essere nel futuro.</div>
+    <?php elseif ($messaggio === 'formato'): ?>
+        <div class="alert alert-error" style="margin-bottom:1rem;">Il formato del numero di documento non è valido (es. CA12345AA o AB1234567).</div>
     <?php endif; ?>
 
     <!-- tabella accompagnatori -->
@@ -200,20 +231,22 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
                         <td><?php echo !empty($aNDoc) ? $aNDoc : '<span style="color:#94a3b8;">—</span>'; ?></td>
                         <td><?php echo !empty($aScad) ? $aScad : '<span style="color:#94a3b8;">—</span>'; ?></td>
                         <td><?php echo !empty($aNote) ? $aNote : '<span style="color:#94a3b8;">—</span>'; ?></td>
-                        <td style="display:flex;gap:0.4rem;">
-                            <?php if ($canEdit): ?>
-                            <button type="button" class="button xs"
-                                data-acc-id="<?php echo $aId; ?>"
-                                data-nome="<?php echo $aNome; ?> <?php echo $aCognome; ?>"
-                                data-doc="<?php echo $aDocJ; ?>"
-                                data-ndoc="<?php echo $aNDocJ; ?>"
-                                data-scad="<?php echo $aScadV; ?>"
-                                data-note="<?php echo $aNoteJ; ?>"
-                                onclick="apriModAcc(this)">Modifica</button>
-                            <?php endif; ?>
-                            <?php if ($ruolo == 2): ?>
-                            <button type="button" class="button cancel xs" onclick="apriRimuoviAcc(<?php echo $aId; ?>, '<?php echo addslashes($aNome . ' ' . $aCognome); ?>')">Rimuovi</button>
-                            <?php endif; ?>
+                        <td>
+                            <div class="azioni-cell">
+                                <?php if ($canEdit): ?>
+                                <button type="button" class="button xs"
+                                    data-acc-id="<?php echo $aId; ?>"
+                                    data-nome="<?php echo $aNome; ?> <?php echo $aCognome; ?>"
+                                    data-doc="<?php echo $aDocJ; ?>"
+                                    data-ndoc="<?php echo $aNDocJ; ?>"
+                                    data-scad="<?php echo $aScadV; ?>"
+                                    data-note="<?php echo $aNoteJ; ?>"
+                                    onclick="apriModAcc(this)">Modifica</button>
+                                <?php endif; ?>
+                                <?php if ($ruolo == 2): ?>
+                                <button type="button" class="button cancel xs" onclick="apriRimuoviAcc(<?php echo $aId; ?>, '<?php echo addslashes($aNome . ' ' . $aCognome); ?>')">Rimuovi</button>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                 <?php endwhile; else: ?>
@@ -272,7 +305,9 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
                         <td><?php echo !empty($pScad) ? $pScad : ''; ?></td>
                         <td><?php echo !empty($pNote) ? $pNote : ''; ?></td>
                         <td>
-                            <button type="button" class="button cancel xs" onclick="apriRimuoviPart(<?php echo $pId; ?>, '<?php echo addslashes($pNome . ' ' . $pCognome); ?>')">Rimuovi</button>
+                            <div class="azioni-cell">
+                                <button type="button" class="button cancel xs" onclick="apriRimuoviPart(<?php echo $pId; ?>, '<?php echo addslashes($pNome . ' ' . $pCognome); ?>')">Rimuovi</button>
+                            </div>
                         </td>
                     </tr>
                 <?php endwhile; else: ?>
@@ -444,6 +479,72 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
 </div>
 
 <script>
+// Imposta data minima odierna per i campi data di scadenza
+document.addEventListener('DOMContentLoaded', function() {
+    var todayStr = new Date().toISOString().split('T')[0];
+    // Form aggiungi
+    var scadAggiungi = document.querySelector('#formAggiungi [name="scadenza"]');
+    if (scadAggiungi) scadAggiungi.min = todayStr;
+    // Form modifica
+    var scadModAcc = document.getElementById('modAccScad');
+    if (scadModAcc) scadModAcc.min = todayStr;
+});
+
+// Validazione client-side form Aggiungi
+document.getElementById('formAggiungi').addEventListener('submit', function(e) {
+    var nDocInput = this.querySelector('[name="nDocumento"]');
+    var scadInput = this.querySelector('[name="scadenza"]');
+    
+    // Pulisci e normalizza
+    var nDocVal = nDocInput.value.replace(/[\s-]/g, '').toUpperCase();
+    nDocInput.value = nDocVal;
+    
+    var docRegex = /^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/;
+    if (!docRegex.test(nDocVal)) {
+        alert("Il numero di documento inserito non è valido.\nFormati consentiti:\n- CIE (es. CA12345AA)\n- Cartaceo/Passaporto (es. AB1234567)");
+        nDocInput.focus();
+        e.preventDefault();
+        return false;
+    }
+    
+    var todayStr = new Date().toISOString().split('T')[0];
+    if (scadInput.value < todayStr) {
+        alert("La data di scadenza del documento deve essere nel futuro.");
+        scadInput.focus();
+        e.preventDefault();
+        return false;
+    }
+});
+
+// Validazione client-side form Modifica Accompagnatore
+document.getElementById('formModAcc').addEventListener('submit', function(e) {
+    var nDocInput = document.getElementById('modAccNDoc');
+    var scadInput = document.getElementById('modAccScad');
+    
+    if (nDocInput.value.trim() !== '') {
+        var nDocVal = nDocInput.value.replace(/[\s-]/g, '').toUpperCase();
+        nDocInput.value = nDocVal;
+        
+        var docRegex = /^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/;
+        if (!docRegex.test(nDocVal)) {
+            alert("Il numero di documento dell'accompagnatore non è valido.\nFormati consentiti:\n- CIE (es. CA12345AA)\n- Cartaceo/Passaporto (es. AB1234567)");
+            nDocInput.focus();
+            e.preventDefault();
+            return false;
+        }
+    }
+    
+    if (scadInput.value !== '') {
+        var todayStr = new Date().toISOString().split('T')[0];
+        if (scadInput.value < todayStr) {
+            alert("La data di scadenza del documento dell'accompagnatore deve essere nel futuro.");
+            scadInput.focus();
+            e.preventDefault();
+            return false;
+        }
+    }
+});
+
 function apriModAcc(btn) {
     var d = btn.dataset;
     document.getElementById('modAccTit').textContent  = 'Dati documento: ' + d.nome;
@@ -473,7 +574,7 @@ function apriRimuoviPart(id, nome) {
     document.getElementById('rimuoviPartNome').textContent = nome;
     document.getElementById('modalRimuoviPart').classList.remove('hidden');
 }
-<?php if ($messaggio === 'campi' || $messaggio === 'error'): ?>
+<?php if ($messaggio === 'campi' || $messaggio === 'error' || $messaggio === 'scaduto' || $messaggio === 'formato'): ?>
 document.getElementById('modalAggiungi').classList.remove('hidden');
 <?php endif; ?>
 </script>

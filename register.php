@@ -4,6 +4,17 @@
 
     $errore = "";
     $successo = "";
+    $errori_campi = [
+        'nome' => '',
+        'cognome' => '',
+        'email' => '',
+        'password' => '',
+        'confirm-password' => ''
+    ];
+
+    $nome = "";
+    $cognome = "";
+    $email = "";
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $nome = trim(isset($_POST['nome']) ? $_POST['nome'] : '');
@@ -14,27 +25,44 @@
 
         // validazione campi obbligatori
         if ($nome === '' || strlen($nome) > 50) {
-            $errore = "Nome obbligatorio (max 50 caratteri).";
-        } elseif ($cognome === '' || strlen($cognome) > 50) {
-            $errore = "Cognome obbligatorio (max 50 caratteri).";
-        } elseif (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $nome) || !preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $cognome)) {
-            $errore = "Nome e cognome possono contenere solo lettere.";
-        } elseif ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errore = "Inserisci un indirizzo email valido.";
+            $errori_campi['nome'] = "Nome obbligatorio (max 50 caratteri).";
+        } elseif (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $nome)) {
+            $errori_campi['nome'] = "Il nome può contenere solo lettere.";
+        }
+
+        if ($cognome === '' || strlen($cognome) > 50) {
+            $errori_campi['cognome'] = "Cognome obbligatorio (max 50 caratteri).";
+        } elseif (!preg_match('/^[a-zA-ZÀ-ÿ\s\'-]+$/', $cognome)) {
+            $errori_campi['cognome'] = "Il cognome può contenere solo lettere.";
+        }
+
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errori_campi['email'] = "Inserisci un indirizzo email valido.";
         } elseif (!preg_match('/^[a-zA-Z]+\.[a-zA-Z]+@calvino\.edu\.it$/i', $email)) {
-            $errore = "Solo email scolastiche (nome.cognome@calvino.edu.it) sono ammesse.";
-        } elseif ($password !== $conferma_password) {
-            $errore = "Le password non coincidono.";
+            $errori_campi['email'] = "Solo email scolastiche (nome.cognome@calvino.edu.it) sono ammesse.";
+        }
+
+        if ($password === '') {
+            $errori_campi['password'] = "La password è obbligatoria.";
         } elseif (strlen($password) < 6) {
-            $errore = "La password deve contenere almeno 6 caratteri.";
-        } else {
+            $errori_campi['password'] = "La password deve contenere almeno 6 caratteri.";
+        }
+
+        if ($conferma_password === '') {
+            $errori_campi['confirm-password'] = "Conferma la password.";
+        } elseif ($password !== $conferma_password) {
+            $errori_campi['confirm-password'] = "Le password non coincidono.";
+        }
+
+        // Procedi se non ci sono errori nei singoli campi
+        if (empty(array_filter($errori_campi))) {
             $email = $conn->real_escape_string($email);
             
             // controllo email esistente
             $controllo = $conn->query("SELECT Mail FROM utente WHERE Mail = '$email'");
 
             if ($controllo && $controllo->num_rows > 0) {
-                $errore = "L'indirizzo email è già in uso.";
+                $errori_campi['email'] = "L'indirizzo email è già in uso.";
             } else {
                 $nome = $conn->real_escape_string($nome);
                 $cognome = $conn->real_escape_string($cognome);
@@ -45,6 +73,7 @@
                 $sql = "INSERT INTO utente (Nome, Cognome, Mail, Password, IDTipo) VALUES ('$nome', '$cognome', '$email', '$psw_hash', $tipo)";
                 if ($conn->query($sql)) {
                     $successo = "Registrazione completata! Puoi ora accedere.";
+                    $nome = $cognome = $email = ""; // Resetta i campi solo in caso di successo
                 } else {
                     $errore = "Errore durante la registrazione.";
                 }
@@ -142,26 +171,35 @@
                     <div class="form-group" style="display: flex; gap: 0.5rem; flex-direction: row !important;">
                         <div style="flex: 1; display: flex; flex-direction: column;">
                             <label for="nome">Nome</label>
-                            <input type="text" id="nome" name="nome" placeholder="Mario" required>
+                            <input type="text" id="nome" name="nome" placeholder="Mario" value="<?php echo htmlspecialchars($nome ?? ''); ?>" required class="<?php echo !empty($errori_campi['nome']) ? 'input-error' : ''; ?>">
+                            <?php if (!empty($errori_campi['nome'])): ?>
+                                <span class="field-error"><?php echo $errori_campi['nome']; ?></span>
+                            <?php endif; ?>
                         </div>
                         <div style="flex: 1; display: flex; flex-direction: column;">
                             <label for="cognome">Cognome</label>
-                            <input type="text" id="cognome" name="cognome" placeholder="Rossi" required>
+                            <input type="text" id="cognome" name="cognome" placeholder="Rossi" value="<?php echo htmlspecialchars($cognome ?? ''); ?>" required class="<?php echo !empty($errori_campi['cognome']) ? 'input-error' : ''; ?>">
+                            <?php if (!empty($errori_campi['cognome'])): ?>
+                                <span class="field-error"><?php echo $errori_campi['cognome']; ?></span>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email scolastica</label>
-                        <input type="email" id="email" name="email" placeholder="nome.cognome@calvino.edu.it" required
+                        <input type="email" id="email" name="email" placeholder="nome.cognome@calvino.edu.it" value="<?php echo htmlspecialchars($email ?? ''); ?>" required
                                pattern="[a-zA-Z]+\.[a-zA-Z]+@calvino\.edu\.it"
-                               title="Usa la tua email scolastica: nome.cognome@calvino.edu.it">
+                               title="Usa la tua email scolastica: nome.cognome@calvino.edu.it" class="<?php echo !empty($errori_campi['email']) ? 'input-error' : ''; ?>">
+                        <?php if (!empty($errori_campi['email'])): ?>
+                            <span class="field-error"><?php echo $errori_campi['email']; ?></span>
+                        <?php endif; ?>
                         <small style="color: var(--my-text-muted, #aaa); font-size: 0.78rem; margin-top: 0.2rem;">Solo email @calvino.edu.it sono ammesse</small>
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password</label>
                         <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                            <input type="password" id="password" name="password" placeholder="********" required style="width: 100%; padding-right: 40px; box-sizing: border-box;">
+                            <input type="password" id="password" name="password" placeholder="********" required style="width: 100%; padding-right: 40px; box-sizing: border-box;" class="<?php echo !empty($errori_campi['password']) ? 'input-error' : ''; ?>">
                             <span id="togglePassword1" style="position: absolute; right: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -169,12 +207,15 @@
                                 </svg>
                             </span>
                         </div>
+                        <?php if (!empty($errori_campi['password'])): ?>
+                            <span class="field-error"><?php echo $errori_campi['password']; ?></span>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-group">
                         <label for="confirm-password">Conferma Password</label>
                         <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                            <input type="password" id="confirm-password" name="confirm-password" placeholder="********" required style="width: 100%; padding-right: 40px; box-sizing: border-box;">
+                            <input type="password" id="confirm-password" name="confirm-password" placeholder="********" required style="width: 100%; padding-right: 40px; box-sizing: border-box;" class="<?php echo !empty($errori_campi['confirm-password']) ? 'input-error' : ''; ?>">
                             <span id="togglePassword2" style="position: absolute; right: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -182,6 +223,9 @@
                                 </svg>
                             </span>
                         </div>
+                        <?php if (!empty($errori_campi['confirm-password'])): ?>
+                            <span class="field-error"><?php echo $errori_campi['confirm-password']; ?></span>
+                        <?php endif; ?>
                     </div>
                     
 

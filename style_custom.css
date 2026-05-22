@@ -259,7 +259,7 @@ button.btn-boccia:hover, .button.btn-boccia:hover {
 
 
 .azioni-cell {
-    display: flex;
+    display: inline-flex;
     gap: 0.4rem;
     align-items: center;
     flex-wrap: nowrap;
@@ -357,10 +357,8 @@ button.btn-boccia:hover, .button.btn-boccia:hover {
 }
 
 .table-container tbody td:last-child {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: nowrap;
+    text-align: left;
+    white-space: nowrap;
 }
 
 
@@ -486,3 +484,69 @@ button.btn-boccia:hover, .button.btn-boccia:hover {
     color: #475569;
 }
 .badge-stato-conclusa::before { background: #94a3b8; }
+
+/* --- Barra di ricerca premium e validazione campi --- */
+.search-bar-wrapper {
+    position: relative;
+    max-width: 380px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar-wrapper input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.5rem !important;
+    border: 1px solid var(--blue-200) !important;
+    border-radius: 99px !important;
+    font-size: 0.92rem !important;
+    background: var(--my-white) !important;
+    color: var(--blue-900) !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+.search-bar-wrapper input:focus {
+    outline: none !important;
+    border-color: var(--blue-500) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+}
+
+.search-bar-wrapper svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: var(--my-gray);
+    pointer-events: none;
+    transition: fill 0.2s ease;
+}
+
+.search-bar-wrapper input:focus + svg {
+    fill: var(--blue-500);
+}
+
+.field-error {
+    color: var(--hex-red) !important;
+    font-size: 0.78rem !important;
+    margin-top: 0.25rem !important;
+    display: block !important;
+    font-weight: 500 !important;
+    text-align: left !important;
+}
+
+.input-error {
+    border: 1px solid var(--hex-red) !important;
+    background-color: #fff5f5 !important;
+}
+
+/* Abilita scorrimento fluido in tutta la pagina */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Blocco scorrimento della pagina di sfondo se un modale è visibile (regola CSS premium nativa) */
+body:has(.modal-overlay:not(.hidden)) {
+    overflow: hidden !important;
+}

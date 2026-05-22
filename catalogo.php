@@ -290,13 +290,33 @@ $tot5g = $gite5g ? $gite5g->num_rows : 0;
     <link rel="stylesheet" href="style_custom.css">
     <script src="vetrina.js" defer></script>
     <script>
+    function selezionaMezzo(selectId, valore) {
+        var sel = document.getElementById(selectId);
+        if (!sel || !valore) return;
+        var valLower = valore.toLowerCase().trim();
+        for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value.toLowerCase().trim() === valLower) {
+                sel.selectedIndex = i;
+                return;
+            }
+        }
+        // fallback: cerca corrispondenza parziale (es. 'autobus' contiene 'bus')
+        for (var j = 0; j < sel.options.length; j++) {
+            var optLower = sel.options[j].value.toLowerCase().trim();
+            if (optLower && (valLower.indexOf(optLower) !== -1 || optLower.indexOf(valLower) !== -1)) {
+                sel.selectedIndex = j;
+                return;
+            }
+        }
+        sel.selectedIndex = 0;
+    }
     function apriOrg1g(btn) {
         var d = btn.dataset;
         document.getElementById('org1g_id').value             = d.id;
         document.getElementById('org1g_title').textContent    = 'Organizza: ' + d.dest;
         document.getElementById('org1g_mezzo_dest').value     = d.dest;
         document.getElementById('org1g_descrizione').value    = d.descrizione || '';
-        document.getElementById('org1g_mezzo').value          = d.mezzo    || '';
+        selezionaMezzo('org1g_mezzo', d.mezzo || '');
         document.getElementById('org1g_periodo').value        = d.periodo  || '';
         document.getElementById('org1g_classe').value         = d.classi   || '';
         document.getElementById('org1g_costoPersona').value   = d.costo    || '';
@@ -314,7 +334,7 @@ $tot5g = $gite5g ? $gite5g->num_rows : 0;
         document.getElementById('org5g_title').textContent    = 'Organizza: ' + d.dest;
         document.getElementById('org5g_mezzo_dest').value     = d.dest;
         document.getElementById('org5g_descrizione').value    = d.descrizione || '';
-        document.getElementById('org5g_mezzo').value          = d.mezzo    || '';
+        selezionaMezzo('org5g_mezzo', d.mezzo || '');
         document.getElementById('org5g_periodo').value        = d.periodo  || '';
         document.getElementById('org5g_classe').value         = d.classi   || '';
         document.getElementById('org5g_costoAPersona').value  = d.costo    || '';
@@ -331,7 +351,7 @@ $tot5g = $gite5g ? $gite5g->num_rows : 0;
         document.getElementById('mod1g_id').value           = d.id;
         document.getElementById('mod1g_destinazione').value = d.dest;
         document.getElementById('mod1g_descrizione').value  = d.descrizione || '';
-        document.getElementById('mod1g_mezzo').value        = d.mezzo   || '';
+        selezionaMezzo('mod1g_mezzo', d.mezzo || '');
         document.getElementById('mod1g_periodo').value      = d.periodo || '';
         document.getElementById('mod1g_classi').value       = d.classi  || '';
         document.getElementById('mod1g_costo').value        = d.costo   || '';
@@ -445,6 +465,21 @@ if ($messaggio === 'organizza_ok') {
     </script>';
 }
 ?>
+<div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem;">
+    <div class="search-bar-wrapper" style="margin-bottom: 0; max-width: 380px; width: 100%;">
+        <input type="text" id="cercaProposte" onkeyup="cercaInTabelle('cercaProposte', 'table')" placeholder="Cerca destinazione, mezzo, periodo, docente...">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path d="M784-120 533-371q-30 24-74 37.5T367-320q-101 0-171-70t-70-171q0-101 70-171t171-70q101 0 171 70t70 171q0 48-13.5 92T533-533l251 251-50 50ZM367-400q67 0 113.5-46.5T527-560q0-67-46.5-113.5T367-720q-67 0-113.5 46.5T207-560q0 67 46.5 113.5T367-400Z"/>
+        </svg>
+    </div>
+    <a href="#gite-quinte" class="button outline" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: 99px; padding: 0.6rem 1.2rem; font-size: 0.88rem; transition: all 0.2s ease; height: auto; min-width: 0; line-height: 1;">
+        <span>vai a gite per le quinte</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/>
+        </svg>
+    </a>
+</div>
+
 <!-- sezione gite 1 giorno -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
     <h3 style="color:var(--blue-700);margin:0;">Proposte gite di un giorno</h3>
@@ -480,7 +515,7 @@ if ($gite1g && $gite1g->num_rows > 0) {
         $costoJs      = (float)$r['costoAPersona'];
         $azioniCol = '';
         if ($_SESSION['ruolo'] == 2) {
-            $azioniCol = "<td style='display:flex;gap:0.4rem;'>
+            $azioniCol = "<td><div class='azioni-cell'>
                 <button type='button' class='button xs'
                     data-id='$id' data-dest='$destJs' data-descrizione='$descJs'
                     data-mezzo='$mezzoJs' data-periodo='$perJs'
@@ -488,7 +523,7 @@ if ($gite1g && $gite1g->num_rows > 0) {
                     onclick=\"apriModifica1g(this)\">Modifica</button>
                 <button type='button' class='button cancel xs'
                     onclick=\"apriElimina($id,'$destJs','elimina_1g')\">Elimina</button>
-            </td>";
+            </div></td>";
         }
         echo "<tr>
             <td>$dest</td>
@@ -517,7 +552,7 @@ if ($gite1g && $gite1g->num_rows > 0) {
 </div></div>
 
 <!-- sezione gite piu giorni -->
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+<div id="gite-quinte" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem; scroll-margin-top: 5rem;">
     <h3 style="color:var(--blue-700);margin:0;">Proposte gite per le quinte</h3>
     <button class="button" onclick="document.getElementById('modal5g').classList.remove('hidden')">+ Nuova Proposta</button>
 </div>
@@ -551,7 +586,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
         $costoJs      = (float)$r['costoAPersona'];
         $azioniCol = '';
         if ($_SESSION['ruolo'] == 2) {
-            $azioniCol = "<td style='display:flex;gap:0.4rem;'>
+            $azioniCol = "<td><div class='azioni-cell'>
                 <button type='button' class='button xs'
                     data-id='$id' data-dest='$destJs' data-descrizione='$descJs'
                     data-mezzo='$mezzoJs' data-periodo='$perJs'
@@ -559,7 +594,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
                     onclick=\"apriModifica5g(this)\">Modifica</button>
                 <button type='button' class='button cancel xs'
                     onclick=\"apriElimina($id,'$destJs','elimina_5g')\">Elimina</button>
-            </td>";
+            </div></td>";
         }
         echo "<tr>
             <td>$dest</td>
@@ -614,6 +649,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <label>Mezzo di trasporto *</label>
             <select name="mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
+                <option value="Autobus">Autobus</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
                 <option value="Ci incontriamo direttamente lì">Ci incontriamo direttamente lì</option>
@@ -719,6 +755,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <label>Mezzo di trasporto *</label>
             <select name="org_mezzo" id="org1g_mezzo" class="form-control" required>
                 <option value="">— Seleziona —</option>
+                <option value="Autobus">Autobus</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
                 <option value="Ci incontriamo direttamente lì">Ci incontriamo direttamente lì</option>
@@ -854,6 +891,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
             <label>Mezzo di trasporto</label>
             <select name="mod_mezzo" id="mod1g_mezzo" class="form-control">
                 <option value="">— Seleziona —</option>
+                <option value="Autobus">Autobus</option>
                 <option value="Bus">Bus</option>
                 <option value="Treno">Treno</option>
                 <option value="Ci incontriamo direttamente lì">Ci incontriamo direttamente lì</option>
