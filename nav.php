@@ -4,10 +4,11 @@
 
     $nome_utente = isset($_SESSION['username']) ? $_SESSION['username'] : 'Utente Sconosciuto';
     $ruolo = isset($_SESSION['ruolo']) ? $_SESSION['ruolo'] : null;
+    $foto_utente = isset($_SESSION['foto']) ? $_SESSION['foto'] : '';
     $paginaCorrente = basename($_SERVER['PHP_SELF']);
 
     // protezione per chi non e loggato
-    if (!$ruolo && $paginaCorrente != 'login.php' && $paginaCorrente != 'register.php' && $paginaCorrente != 'index.php') {
+    if (!$ruolo && $paginaCorrente != 'login.php' && $paginaCorrente != 'index.php') {
         header("Location: login.php");
         exit;
     }
@@ -35,14 +36,17 @@
             <?php endif; ?>
         <?php else: ?>
             <a href="login.php" class="<?php echo ($paginaCorrente == 'login.php') ? 'active' : ''; ?>">Accedi</a>
-            <a href="register.php" class="<?php echo ($paginaCorrente == 'register.php') ? 'active' : ''; ?>">Registrati</a>
         <?php endif; ?>
     </nav>
 
     <div class="header-container header-right" style="flex: 1; flex-basis: 0; position: relative;">
         <?php if ($ruolo): ?>
             <div class="profile-container" id="pulsanteProfilo" onclick="toggleMenuTendina(event)">
-                <div class="profile-picture"></div>
+                <?php if ($foto_utente): ?>
+                    <img src="<?php echo htmlspecialchars($foto_utente); ?>" alt="Foto profilo" class="profile-picture" style="object-fit:cover;">
+                <?php else: ?>
+                    <div class="profile-picture"></div>
+                <?php endif; ?>
                 <div class="profile-info">
                     <span class="user-name"><?php echo htmlspecialchars($nome_utente); ?></span>
                     <span class="user-role"><?php echo ($ruolo == 2) ? 'Commissione' : 'Docente'; ?></span>

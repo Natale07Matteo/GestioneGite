@@ -51,29 +51,18 @@ if ($ruolo) {
             <!-- contenuto per utenti non loggati -->
             <div class="hero-section">
                 <h1>Sistema Gestione Gite</h1>
-                <p>Benvenuto nel portale per l'organizzazione dei viaggi d'istruzione. Accedi o registrati per iniziare.</p>
+                <p>Benvenuto nel portale per l'organizzazione dei viaggi d'istruzione. Accedi con il tuo account del Portale Calvino per iniziare.</p>
             </div>
-            <div class="home-grid">
-                <div class="card">
+            <div style="max-width: 500px; margin: 2rem auto 0;">
+                <div class="card centered">
                     <div class="card-header">
                         <h3>Accedi</h3>
                     </div>
                     <div class="card-body">
-                        <p>Hai gia un account? Effettua il login per accedere alle funzionalita.</p>
+                        <p>Effettua il login tramite il Portale Calvino per accedere alle funzionalità.</p>
                     </div>
-                    <div class="card-footer">
-                        <a href="login.php" class="button full-width home-button">Accedi</a>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Registrati</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Non hai un account? Crea il tuo profilo per proporre e organizzare gite.</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="register.php" class="button full-width home-button">Registrati</a>
+                    <div class="card-footer" style="justify-content: center;">
+                        <a href="login.php" class="button full-width home-button">Accedi con Portale Calvino</a>
                     </div>
                 </div>
             </div>
