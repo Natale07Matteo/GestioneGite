@@ -1,11 +1,26 @@
 <?php
     @session_start();
     require_once('config.php');
+    require_once('portal_roles.php');
+    require_once('portal_auth.php');
+
+    $paginaCorrente = basename($_SERVER['PHP_SELF']);
+
+    // ─── Validazione token su ogni caricamento pagina ────────────────────────
+    if (isset($_SESSION['ruolo']) && $_SESSION['ruolo']) {
+        // Utente loggato → verifica che il token sia ancora valido
+        verificaTokenValido();
+    } else {
+        // Non loggato → tenta auto-login dal cookie (silenzioso, no redirect)
+        // Escludi login.php perché gestisce il login nel suo blocco PHP in testa
+        if ($paginaCorrente !== 'login.php') {
+            tentaAutoLogin($conn, $PORTAL_ROLES);
+        }
+    }
 
     $nome_utente = isset($_SESSION['username']) ? $_SESSION['username'] : 'Utente Sconosciuto';
     $ruolo = isset($_SESSION['ruolo']) ? $_SESSION['ruolo'] : null;
     $foto_utente = isset($_SESSION['foto']) ? $_SESSION['foto'] : '';
-    $paginaCorrente = basename($_SERVER['PHP_SELF']);
 
     // protezione per chi non e loggato
     if (!$ruolo && $paginaCorrente != 'login.php' && $paginaCorrente != 'index.php') {
