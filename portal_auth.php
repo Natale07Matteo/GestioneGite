@@ -25,7 +25,7 @@ define('PORTALE_LOGOUT',     'https://portale.calvino.edu.it/api/auth/logout');
  *
  * @return array|null  Array decodificato della risposta JSON, oppure null in caso di errore.
  */
-function chiamaPortaleAPI(): ?array
+function chiamaPortaleAPI()
 {
     // Costruisce l'header Cookie da inoltrare (solo user_token)
     if (empty($_COOKIE['user_token'])) {
@@ -75,7 +75,7 @@ function chiamaPortaleAPI(): ?array
  *
  * @return void  (redirige e fa exit se il token non è valido)
  */
-function verificaTokenValido(): void
+function verificaTokenValido()
 {
     $data = chiamaPortaleAPI();
 
@@ -89,9 +89,9 @@ function verificaTokenValido(): void
 
     // Token valido → aggiorna nome e foto in sessione (dati sempre freschi)
     $user = $data['data']['user'];
-    $nome    = trim($user['name'] ?? '');
-    $cognome = trim($user['surname'] ?? '');
-    $foto    = trim($user['profile_image'] ?? '');
+    $nome    = trim(isset($user['name']) ? $user['name'] : '');
+    $cognome = trim(isset($user['surname']) ? $user['surname'] : '');
+    $foto    = trim(isset($user['profile_image']) ? $user['profile_image'] : '');
 
     if ($nome || $cognome) {
         $_SESSION['username'] = trim($nome . ' ' . $cognome);
@@ -113,7 +113,7 @@ function verificaTokenValido(): void
  *         false   → nessun token presente o portale non raggiungibile
  *         string  → messaggio di errore (es. ruolo non autorizzato)
  */
-function tentaAutoLogin(mysqli $conn, array $PORTAL_ROLES)
+function tentaAutoLogin($conn, $PORTAL_ROLES)
 {
     // ─── 1. Chiama l'API del portale ─────────────────────────────────────────
     $data = chiamaPortaleAPI();
@@ -123,7 +123,7 @@ function tentaAutoLogin(mysqli $conn, array $PORTAL_ROLES)
     }
 
     // ─── 2. Estrae i dati utente ─────────────────────────────────────────────
-    $pUser = $data['data']['user'] ?? null;
+    $pUser = isset($data['data']['user']) ? $data['data']['user'] : null;
 
     if (!$pUser || empty($pUser['id']) || empty($pUser['email'])) {
         error_log('[portal_auth gite] Dati utente mancanti nella risposta del portale.');
@@ -131,17 +131,17 @@ function tentaAutoLogin(mysqli $conn, array $PORTAL_ROLES)
     }
 
     $portaleMail    = strtolower(trim($pUser['email']));
-    $portaleNome    = trim($pUser['name'] ?? '');
-    $portaleCognome = trim($pUser['surname'] ?? '');
-    $portaleFoto    = trim($pUser['profile_image'] ?? '');
-    $portaleRuoli   = $pUser['roles'] ?? [];
+    $portaleNome    = trim(isset($pUser['name']) ? $pUser['name'] : '');
+    $portaleCognome = trim(isset($pUser['surname']) ? $pUser['surname'] : '');
+    $portaleFoto    = trim(isset($pUser['profile_image']) ? $pUser['profile_image'] : '');
+    $portaleRuoli   = isset($pUser['roles']) ? $pUser['roles'] : [];
 
     // ─── 3. Cerca il primo ruolo autorizzato ─────────────────────────────────
     $idTipoLocale = null;
     $ruoloTrovato = '';
 
     foreach ($portaleRuoli as $ruolo) {
-        $nomeRuolo = strtolower(trim($ruolo['role_name'] ?? ''));
+        $nomeRuolo = strtolower(trim(isset($ruolo['role_name']) ? $ruolo['role_name'] : ''));
         if (isset($PORTAL_ROLES[$nomeRuolo])) {
             $idTipoLocale = $PORTAL_ROLES[$nomeRuolo];
             $ruoloTrovato = $nomeRuolo;
@@ -151,7 +151,7 @@ function tentaAutoLogin(mysqli $conn, array $PORTAL_ROLES)
 
     if ($idTipoLocale === null) {
         $ruoliUtente = array_map(function ($r) {
-            return $r['role_name'] ?? '?';
+            return isset($r['role_name']) ? $r['role_name'] : '?';
         }, $portaleRuoli);
         error_log('[portal_auth gite] Ruolo non autorizzato per ' . $portaleMail . ': ' . implode(', ', $ruoliUtente));
         return 'Il tuo ruolo sul portale (<strong>' . htmlspecialchars(implode(', ', $ruoliUtente)) . '</strong>) non è autorizzato per questa applicazione. Contatta un amministratore.';
@@ -162,13 +162,40 @@ function tentaAutoLogin(mysqli $conn, array $PORTAL_ROLES)
     $stmt = $conn->prepare("SELECT IDUtente, Nome, Cognome, Mail, IDTipo FROM utente WHERE LOWER(Mail) = ? LIMIT 1");
     $stmt->bind_param("s", $portaleMail);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $utente = $result->fetch_assoc();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        $dbId = null;
+        $dbNome = null;
+        $dbCognome = null;
+        $dbMail = null;
+        $dbTipo = null;
+        $stmt->bind_result($dbId, $dbNome, $dbCognome, $dbMail, $dbTipo);
+        $stmt->fetch();
+        $utente = [
+            'IDUtente' => $dbId,
+            'Nome'     => $dbNome,
+            'Cognome'  => $dbCognome,
+            'Mail'     => $dbMail,
+            'IDTipo'   => $dbTipo,
+        ];
+    }
     $stmt->close();
 
     // ─── 5. Utente non trovato → crea un nuovo account ──────────────────────
     if (!$utente) {
-        $passwordFake = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+        $rawBytes = '';
+        if (function_exists('random_bytes')) {
+            try {
+                $rawBytes = random_bytes(16);
+            } catch (Exception $e) {
+                $rawBytes = uniqid(mt_rand(), true);
+            }
+        } else {
+            $rawBytes = uniqid(mt_rand(), true);
+        }
+        $passwordFake = password_hash(bin2hex($rawBytes), PASSWORD_DEFAULT);
+
         $stmt = $conn->prepare("INSERT INTO utente (Nome, Cognome, Mail, Password, IDTipo) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssi", $portaleNome, $portaleCognome, $portaleMail, $passwordFake, $idTipoLocale);
         $stmt->execute();
