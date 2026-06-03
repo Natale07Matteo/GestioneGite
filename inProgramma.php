@@ -129,7 +129,7 @@ $res5g = mysqli_query($conn,
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vetrina.css">
-    <link rel="stylesheet" href="style_custom.css">
+    <link rel="stylesheet" href="style_custom.css?v=<?php echo time(); ?>">
     <script src="vetrina.js" defer></script>
 </head>
 <body>
@@ -245,7 +245,7 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
 
 <!-- gite piu giorni -->
 <h3 style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte</h3>
-<div class="table-section"><div class="table-container">
+<div class="table-section"><div class="table-container table-quinte">
 <table>
 <thead><tr>
     <th>Destinazione</th><th>Descrizione</th><th>Stato</th><th>Mezzo</th><th>Classi</th>
@@ -492,7 +492,7 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
 </div>
 </div>
 
-<footer><div class="footer-container"><div class="footer-left"><p><strong>Gestione Gite Scolastiche</strong></p></div></div></footer>
+<?php include('footer.php'); ?>
 </div>
 
 <script>

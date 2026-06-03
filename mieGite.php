@@ -353,7 +353,7 @@ function badgeClass($stato) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vetrina.css">
-    <link rel="stylesheet" href="style_custom.css">
+    <link rel="stylesheet" href="style_custom.css?v=<?php echo time(); ?>">
     <script src="vetrina.js" defer></script>
     <script>
     function apriArchivia(id, tipo, sonoAutore, dest) {
@@ -471,8 +471,9 @@ function badgeClass($stato) {
                     <span><strong>Costo a persona:</strong> <?php echo $costo; ?></span>
                     <span><strong>Descrizione:</strong> <?php echo $descDisp ? $descDisp : '—'; ?></span>
                     <?php if ($riga['idStato'] == 3 && !empty($riga['motivazione'])): ?>
-                        <div style="margin-top:0.75rem; padding:0.6rem 0.8rem; background:rgba(239,68,68,0.08); border-left:3px solid var(--hex-red); border-radius:6px; font-size:0.88rem; color:#b91c1c; text-align:left;">
-                            <strong>Motivo bocciatura:</strong> <?php echo htmlspecialchars($riga['motivazione']); ?>
+                        <div class="motivo-bocciatura-box">
+                            <strong>Motivo bocciatura:</strong>
+                            <div class="motivo-bocciatura-testo"><?php echo htmlspecialchars($riga['motivazione']); ?></div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -1081,7 +1082,7 @@ function badgeClass($stato) {
     <input type="hidden" name="sono_autore" id="archiviaAutore">
 </form>
 
-<footer><div class="footer-container"><div class="footer-left"><p><strong>Gestione Gite Scolastiche</strong></p></div></div></footer>
+<?php include('footer.php'); ?>
 </div>
 
 <!-- modal: accompagnatori gita 1g -->

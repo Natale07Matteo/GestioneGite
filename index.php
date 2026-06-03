@@ -39,7 +39,7 @@ if ($ruolo) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vetrina.css">
-    <link rel="stylesheet" href="style_custom.css">
+    <link rel="stylesheet" href="style_custom.css?v=<?php echo time(); ?>">
     <script src="vetrina.js" defer></script>
 </head>
 <body>
@@ -79,7 +79,7 @@ if ($ruolo) {
                 </p>
             </div>
             <!-- riepilogo numerico -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;">
+            <div class="home-grid <?php echo ($ruolo == 2) ? 'grid-4-cols' : 'grid-3-cols'; ?>" style="margin-bottom: 2rem; margin-top: 0;">
                 <div class="card stat-card" onclick="window.location.href='mieGite.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:var(--blue-600);"><?php echo $totProposte; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Le mie proposte</p>
@@ -100,7 +100,7 @@ if ($ruolo) {
                 <?php endif; ?>
             </div>
             <!-- card navigazione -->
-            <div class="home-grid <?php echo ($ruolo != 2) ? 'grid-3-cols' : ''; ?>">
+            <div class="home-grid <?php echo ($ruolo == 2) ? 'grid-4-cols' : 'grid-3-cols'; ?>" style="margin-top: 2rem;">
                 <div class="card">
                     <div class="card-header">
                         <h3>Proposte</h3>
@@ -150,13 +150,7 @@ if ($ruolo) {
             </div>
 <?php endif; ?>
         </main>
-        <footer>
-            <div class="footer-container">
-                <div class="footer-left">
-                    <p><strong>Gestione Gite Scolastiche</strong></p>
-                </div>
-            </div>
-        </footer>
+        <?php include('footer.php'); ?>
     </div>
 </body>
 </html>

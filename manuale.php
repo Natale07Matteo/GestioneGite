@@ -282,13 +282,7 @@ include('nav.php');
 
 </main>
 
-<footer>
-    <div class="footer-container">
-        <div class="footer-left">
-            <p><strong>Gestione Gite Scolastiche</strong> &copy; 2026</p>
-        </div>
-    </div>
-</footer>
+    <?php include('footer.php'); ?>
 </div>
 </body>
 </html>

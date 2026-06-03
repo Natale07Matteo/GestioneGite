@@ -69,7 +69,7 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vetrina.css">
-    <link rel="stylesheet" href="style_custom.css">
+    <link rel="stylesheet" href="style_custom.css?v=<?php echo time(); ?>">
     <script src="vetrina.js" defer></script>
     <script>
     function apriConferma(idGita, azione, tabella, destinazione) {
@@ -177,7 +177,7 @@ if ($bozze1g && $bozze1g->num_rows > 0) {
     <h3 style="color:var(--blue-700);margin:0;">Bozze gite per le quinte</h3>
 </div>
 
-<div class="table-section"><div class="table-container">
+<div class="table-section"><div class="table-container table-quinte">
 <table>
 <thead><tr>
     <th>Destinazione</th>
@@ -246,7 +246,7 @@ if ($bozze5g && $bozze5g->num_rows > 0) {
 </div>
 </div>
 
-<footer><div class="footer-container"><div class="footer-left"><p><strong>Gestione Gite Scolastiche</strong></p></div></div></footer>
+<?php include('footer.php'); ?>
 </div><!-- /container -->
 </body>
 </html>

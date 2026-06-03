@@ -28,19 +28,51 @@ define('PORTALE_LOGOUT',     'https://portale.calvino.edu.it/api/auth/logout');
 function chiamaPortaleAPI()
 {
     try {
-        if (!function_exists('curl_init')) {
-            echo '<div style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-family: monospace; margin: 10px 0; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">';
-            echo '<strong>[DEBUG ERROR - portal_auth]</strong> L\'estensione PHP <strong>cURL</strong> non è installata o abilitata su questa VM! Attiva l\'estensione in php.ini.';
-            echo '</div>';
-            return null;
-        }
-
         // Costruisce l'header Cookie da inoltrare (solo user_token)
         if (empty($_COOKIE['user_token'])) {
             return null;
         }
 
         $cookieHeader = 'user_token=' . urlencode($_COOKIE['user_token']);
+
+        if (!function_exists('curl_init')) {
+            if (!ini_get('allow_url_fopen')) {
+                echo '<div style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-family: monospace; margin: 10px 0; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">';
+                echo '<strong>[DEBUG ERROR - portal_auth]</strong> Né l\'estensione <strong>cURL</strong> né <strong>allow_url_fopen</strong> sono abilitate su questa VM! Impossibile contattare il portale SSO. Attiva cURL o allow_url_fopen in php.ini.';
+                echo '</div>';
+                return null;
+            }
+
+            // Fallback con file_get_contents se cURL non è abilitato
+            $contextOpts = array(
+                'http' => array(
+                    'method' => 'GET',
+                    'header' => "Accept: application/json\r\nCookie: " . $cookieHeader . "\r\n",
+                    'timeout' => 10,
+                    'ignore_errors' => true
+                ),
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                )
+            );
+            
+            $context = stream_context_create($contextOpts);
+            $response = @file_get_contents(PORTALE_API_USER, false, $context);
+            
+            if ($response === false) {
+                error_log('[portal_auth gite] Fallback file_get_contents ha fallito.');
+                return null;
+            }
+            
+            $data = json_decode($response, true);
+            if (!is_array($data)) {
+                error_log('[portal_auth gite] Risposta fallback non JSON: ' . $response);
+                return null;
+            }
+            
+            return $data;
+        }
 
         $ch = curl_init(PORTALE_API_USER);
         if ($ch === false) {

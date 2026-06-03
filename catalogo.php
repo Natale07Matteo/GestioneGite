@@ -287,7 +287,7 @@ $tot5g = $gite5g ? $gite5g->num_rows : 0;
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vetrina.css">
-    <link rel="stylesheet" href="style_custom.css">
+    <link rel="stylesheet" href="style_custom.css?v=<?php echo time(); ?>">
     <script src="vetrina.js" defer></script>
     <script>
     function selezionaMezzo(selectId, valore) {
@@ -557,7 +557,7 @@ if ($gite1g && $gite1g->num_rows > 0) {
     <button class="button" onclick="document.getElementById('modal5g').classList.remove('hidden')">+ Nuova Proposta</button>
 </div>
 
-<div class="table-section"><div class="table-container">
+<div class="table-section"><div class="table-container table-quinte">
 <table>
 <thead><tr>
     <th>Destinazione</th>
@@ -1011,7 +1011,7 @@ if ($gite5g && $gite5g->num_rows > 0) {
 </div>
 </div>
 
-<footer><div class="footer-container"><div class="footer-left"><p><strong>Gestione Gite Scolastiche</strong></p></div></div></footer>
+<?php include('footer.php'); ?>
 </div><!-- /container -->
 </body>
 </html>

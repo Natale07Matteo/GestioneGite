@@ -469,13 +469,7 @@ $numAlunniDisp = isset($gita['numAlunni']) ? $gita['numAlunni'] : '';
 </div>
 </div>
 
-<footer>
-    <div class="footer-container">
-        <div class="footer-left">
-            <p><strong>Gestione Gite Scolastiche</strong></p>
-        </div>
-    </div>
-</footer>
+    <?php include('footer.php'); ?>
 </div>
 
 <script>

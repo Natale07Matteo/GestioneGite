@@ -294,19 +294,7 @@ FILE DI ANGELO
     </div>
 </div>
 
-<footer>
-    <div class="footer-container">
-        <div class="footer-left">
-            <h3>Vetrina UI Kit</h3>
-            <p class="footer-copyright">&copy; 2024 Vetrina UI Kit. All rights reserved.</p>
-        </div>
-        <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Contact</a>
-        </div>
-    </div>
-</footer>
+<?php include('footer.php'); ?>
 
 </body>
 </html>
