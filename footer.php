@@ -78,65 +78,65 @@
             <h4>Link Esterni</h4>
             <ul>
                 <li><a href="https://www.miur.gov.it/" target="_blank">MIUR</a></li>
-                <li><a href="http://www.istruzioneliguria.it/" target="_blank">Ufficio Scolastico Regionale</a></li>
-                <li><a href="#" target="_blank">Ufficio Scolastico Territoriale</a></li>
+                <li><a href="https://www.istruzioneliguria.it/" target="_blank">Ufficio Scolastico Regionale</a></li>
+                <li><a href="https://ust-ge.istruzioneliguria.it/" target="_blank">Ufficio Scolastico Territoriale</a></li>
                 <li><a href="https://cercalascuola.istruzione.it/cercalascuola/" target="_blank">Scuola in Chiaro</a></li>
                 <li><a href="https://www.istruzione.it/iscrizionionline/" target="_blank">Iscrizioni On Line</a></li>
                 <li><a href="https://www.invalsi.it/" target="_blank">Invalsi</a></li>
-                <li><a href="https://www.comune.genova.it/" target="_blank">Comune</a></li>
+                <li><a href="https://www.comune.genova.it/" target="_blank">Comune di Genova</a></li>
             </ul>
         </div>
 
         <div class="footer-links-column">
             <h4>La Scuola</h4>
             <ul>
-                <li><a href="#">Presentazione</a></li>
-                <li><a href="#">I luoghi della scuola</a></li>
-                <li><a href="#">Le carte della scuola</a></li>
-                <li><a href="#">Organizzazione</a></li>
-                <li><a href="#">Le persone</a></li>
-                <li><a href="#">I numeri della scuola</a></li>
-                <li><a href="#">La storia</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">Presentazione</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">I luoghi della scuola</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">Le carte della scuola</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">Organizzazione</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">Le persone</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">I numeri della scuola</a></li>
+                <li><a href="https://calvino.edu.it/la-scuola/" target="_blank">La storia</a></li>
             </ul>
         </div>
 
         <div class="footer-links-column">
             <h4>I Servizi</h4>
             <ul>
-                <li><a href="#">Servizi per il personale scolastico</a></li>
-                <li><a href="#">Servizi per famiglie e studenti</a></li>
-                <li><a href="#">Indirizzi di studio</a></li>
-                <li><a href="#">Tutti i servizi</a></li>
+                <li><a href="https://calvino.edu.it/i-servizi/" target="_blank">Servizi per il personale scolastico</a></li>
+                <li><a href="https://calvino.edu.it/i-servizi/" target="_blank">Servizi per famiglie e studenti</a></li>
+                <li><a href="https://calvino.edu.it/i-servizi/" target="_blank">Indirizzi di studio</a></li>
+                <li><a href="https://calvino.edu.it/i-servizi/" target="_blank">Tutti i servizi</a></li>
             </ul>
             <h4 style="margin-top: 1.5rem;">Didattica</h4>
             <ul>
-                <li><a href="#">Offerta formativa</a></li>
-                <li><a href="#">Le schede didattiche</a></li>
-                <li><a href="#">I progetti delle classi</a></li>
+                <li><a href="https://calvino.edu.it/didattica/" target="_blank">Offerta formativa</a></li>
+                <li><a href="https://calvino.edu.it/didattica/" target="_blank">Le schede didattiche</a></li>
+                <li><a href="https://calvino.edu.it/didattica/" target="_blank">I progetti delle classi</a></li>
             </ul>
         </div>
 
         <div class="footer-links-column">
             <h4>Novità</h4>
             <ul>
-                <li><a href="#">Le notizie</a></li>
-                <li><a href="#">Le circolari</a></li>
-                <li><a href="#">Calendario eventi</a></li>
-                <li><a href="#">Albo online</a></li>
-                <li><a href="#">Orientamento in Ingresso</a></li>
+                <li><a href="https://calvino.edu.it/novita/" target="_blank">Le notizie</a></li>
+                <li><a href="https://calvino.edu.it/novita/" target="_blank">Le circolari</a></li>
+                <li><a href="https://calvino.edu.it/novita/" target="_blank">Calendario eventi</a></li>
+                <li><a href="https://calvino.edu.it/albo-online/" target="_blank">Albo online</a></li>
+                <li><a href="https://calvino.edu.it/novita/" target="_blank">Orientamento in Ingresso</a></li>
             </ul>
         </div>
     </div>
 
     <div class="footer-bottom">
         <div class="footer-bottom-links">
-            <a href="#">Amministrazione Trasparente</a>
+            <a href="https://calvino.edu.it/amministrazione-trasparente/" target="_blank">Amministrazione Trasparente</a>
             <span>-</span>
-            <a href="#">Albo Online</a>
+            <a href="https://calvino.edu.it/albo-online/" target="_blank">Albo Online</a>
             <span>-</span>
-            <a href="#">Privacy Policy</a>
+            <a href="https://calvino.edu.it/privacy-policy/" target="_blank">Privacy Policy</a>
             <span>-</span>
-            <a href="#">Dichiarazione di accessibilità</a>
+            <a href="https://form.agid.gov.it/view/f2a3d7e8-0af3-411b-8f41-0e4fcdf62cc9/" target="_blank">Dichiarazione di accessibilità</a>
         </div>
         <div class="footer-copyright-info">
             <div class="footer-authors">

@@ -49,28 +49,28 @@ if ($ruolo) {
 
 <?php if (!$ruolo): ?>
             <!-- contenuto per utenti non loggati -->
-            <div class="hero-section">
-                <h1>Sistema Gestione Gite</h1>
-                <p>Benvenuto nel portale per l'organizzazione dei viaggi d'istruzione. Accedi con il tuo account del Portale Calvino per iniziare.</p>
+            <div class="hero-section" style="text-align: center; margin-top: 5rem;">
+                <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--blue-700);">Sistema Gestione Gite</h1>
+                <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; color: #475569;">Benvenuto nel portale per l'organizzazione dei viaggi d'istruzione. Accedi con il tuo account del Portale Calvino per iniziare.</p>
             </div>
-            <div style="max-width: 500px; margin: 2rem auto 0;">
-                <div class="card centered">
-                    <div class="card-header">
-                        <h3>Accedi</h3>
+            <div style="max-width: 450px; margin: 3rem auto 6rem;">
+                <div class="card centered" style="padding: 2.5rem 2rem; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);">
+                    <div class="card-header" style="border: none; padding-bottom: 0; margin-bottom: 1rem;">
+                        <h3 style="font-size: 1.5rem; margin: 0;">Accedi</h3>
                     </div>
-                    <div class="card-body">
-                        <p>Effettua il login tramite il Portale Calvino per accedere alle funzionalità.</p>
+                    <div class="card-body" style="margin-bottom: 1.5rem;">
+                        <p style="font-size: 1rem; color: #64748b; margin: 0;">Effettua il login tramite il Portale Calvino per accedere alle funzionalità.</p>
                     </div>
-                    <div class="card-footer" style="justify-content: center;">
-                        <a href="login.php" class="button full-width home-button">Accedi con Portale Calvino</a>
+                    <div class="card-footer" style="justify-content: center; border: none; padding-top: 0; margin-top: 0;">
+                        <a href="login.php" class="button full-width home-button" style="height: 3.5rem; font-size: 1.1rem;">Accedi con Portale Calvino</a>
                     </div>
                 </div>
             </div>
 <?php else: ?>
             <!-- contenuto per utenti loggati -->
-            <div class="hero-section">
+            <div class="hero-section" style="margin-top: 2rem; margin-bottom: 3rem;">
                 <h1 style="font-size:2.5rem;font-weight:700;margin-bottom:0.5rem;color:var(--blue-700);">Benvenuto, <?php echo htmlspecialchars(explode(' ', $nome_utente)[0]); ?></h1>
-                <p style="font-size:1.15rem;color:#475569;margin-bottom:1.5rem;max-width:600px;">
+                <p style="font-size:1.15rem;color:#475569;margin-bottom:0;max-width:600px;">
                     <?php if ($ruolo == 2): ?>
                         Gestisci le proposte, approva le bozze e organizza le gite scolastiche.
                     <?php else: ?>
