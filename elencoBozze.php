@@ -4,36 +4,70 @@ include('nav.php');
 $messaggio = "";
 
 // azioni approva e boccia gita 1 giorno
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'azione_1g') {
-    $idGita      = (int)$_POST['id_gita'];
-    $nuovoStato  = ($_POST['azione'] === 'approva') ? 2 : 3;
-    $motivazione = isset($_POST['motivazione']) ? mysqli_real_escape_string($conn, trim($_POST['motivazione'])) : '';
-    $motivazioneSql = ($nuovoStato == 3 && $motivazione !== '') ? "'$motivazione'" : "NULL";
-    if ($conn->query("UPDATE gita1g SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
-        if ($nuovoStato == 2) {
-            $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
-        } else {
-            $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        if ($_POST['action'] === 'azione_1g') {
+            $idGita = (int)$_POST['id_gita'];
+            
+            $nuovoStato = 3; // default boccia
+            if ($_POST['azione'] === 'approva') {
+                $nuovoStato = 2; // approva
+            }
+            
+            $motivazione = '';
+            if (isset($_POST['motivazione'])) {
+                $motivazione = mysqli_real_escape_string($conn, trim($_POST['motivazione']));
+            }
+            
+            $motivazioneSql = "NULL";
+            if ($nuovoStato == 3) {
+                if ($motivazione !== '') {
+                    $motivazioneSql = "'$motivazione'";
+                }
+            }
+            
+            if ($conn->query("UPDATE gita1g SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
+                if ($nuovoStato == 2) {
+                    $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
+                } else {
+                    $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+                }
+            } else {
+                $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
+            }
         }
-    } else {
-        $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
-    }
-}
-
-// azioni approva e boccia gita 5 giorni
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'azione_5g') {
-    $idGita      = (int)$_POST['id_gita'];
-    $nuovoStato  = ($_POST['azione'] === 'approva') ? 2 : 3;
-    $motivazione = isset($_POST['motivazione']) ? mysqli_real_escape_string($conn, trim($_POST['motivazione'])) : '';
-    $motivazioneSql = ($nuovoStato == 3 && $motivazione !== '') ? "'$motivazione'" : "NULL";
-    if ($conn->query("UPDATE gite5 SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
-        if ($nuovoStato == 2) {
-            $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
-        } else {
-            $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+        
+        // azioni approva e boccia gita 5 giorni
+        if ($_POST['action'] === 'azione_5g') {
+            $idGita = (int)$_POST['id_gita'];
+            
+            $nuovoStato = 3; // default boccia
+            if ($_POST['azione'] === 'approva') {
+                $nuovoStato = 2; // approva
+            }
+            
+            $motivazione = '';
+            if (isset($_POST['motivazione'])) {
+                $motivazione = mysqli_real_escape_string($conn, trim($_POST['motivazione']));
+            }
+            
+            $motivazioneSql = "NULL";
+            if ($nuovoStato == 3) {
+                if ($motivazione !== '') {
+                    $motivazioneSql = "'$motivazione'";
+                }
+            }
+            
+            if ($conn->query("UPDATE gite5 SET idStato = $nuovoStato, motivazione = $motivazioneSql WHERE idGita = $idGita")) {
+                if ($nuovoStato == 2) {
+                    $messaggio = "<div class='alert alert-success'>Gita approvata! Ora è visibile in <a href='catalogo.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Proposte</a>.</div>";
+                } else {
+                    $messaggio = "<div class='alert alert-success'>Gita bocciata. Il docente vedrà il risultato in <a href='mieGite.php' style='color:inherit;text-decoration:underline;font-weight:bold;'>Le mie Gite</a>.</div>";
+                }
+            } else {
+                $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
+            }
         }
-    } else {
-        $messaggio = "<div class='alert alert-error'>Errore aggiornamento.</div>";
     }
 }
 
@@ -57,8 +91,15 @@ $bozze5g = $conn->query("
     ORDER BY g.idGita DESC
 ");
 
-$tot1g = $bozze1g ? $bozze1g->num_rows : 0;
-$tot5g = $bozze5g ? $bozze5g->num_rows : 0;
+$tot1g = 0;
+if ($bozze1g) {
+    $tot1g = $bozze1g->num_rows;
+}
+
+$tot5g = 0;
+if ($bozze5g) {
+    $tot5g = $bozze5g->num_rows;
+}
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -74,13 +115,24 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
     <script>
     function apriConferma(idGita, azione, tabella, destinazione) {
         var modal = document.getElementById('modalConferma');
-        var titolo = azione === 'approva' ? 'Approva Proposta' : 'Boccia Proposta';
-        var testo  = azione === 'approva'
-            ? 'Sei sicuro di voler <strong>approvare</strong> la gita verso <br><strong style="font-size:1.1rem;color:var(--blue-700);">' + destinazione + '</strong>?'
-            : 'Sei sicuro di voler <strong>bocciare</strong> la gita verso <br><strong style="font-size:1.1rem;color:var(--blue-700);">' + destinazione + '</strong>?';
+        var titolo = 'Approva Proposta';
+        if (azione !== 'approva') {
+            titolo = 'Boccia Proposta';
+        }
+        
+        var testo = 'Sei sicuro di voler <strong>approvare</strong> la gita verso <br><strong style="font-size:1.1rem;color:var(--blue-700);">' + destinazione + '</strong>?';
+        if (azione !== 'approva') {
+            testo = 'Sei sicuro di voler <strong>bocciare</strong> la gita verso <br><strong style="font-size:1.1rem;color:var(--blue-700);">' + destinazione + '</strong>?';
+        }
 
-        document.getElementById('confTitolo').innerHTML   = titolo;
-        document.getElementById('confTitolo').style.color = azione === 'approva' ? 'var(--blue-700)' : 'var(--hex-red)';
+        document.getElementById('confTitolo').innerHTML = titolo;
+        
+        var coloreTitolo = 'var(--blue-700)';
+        if (azione !== 'approva') {
+            coloreTitolo = 'var(--hex-red)';
+        }
+        document.getElementById('confTitolo').style.color = coloreTitolo;
+        
         document.getElementById('confTesto').innerHTML    = testo;
         document.getElementById('confIdGita').value       = idGita;
         document.getElementById('confAzione').value       = azione;
@@ -99,7 +151,11 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
         }
 
         var btnConf = document.getElementById('btnConferma');
-        btnConf.className = azione === 'approva' ? 'button' : 'button cancel';
+        var btnClass = 'button';
+        if (azione !== 'approva') {
+            btnClass = 'button cancel';
+        }
+        btnConf.className = btnClass;
 
         modal.classList.remove('hidden');
     }
@@ -148,8 +204,19 @@ $tot5g = $bozze5g ? $bozze5g->num_rows : 0;
 if ($bozze1g && $bozze1g->num_rows > 0) {
     while ($r = $bozze1g->fetch_assoc()) {
         $dest   = htmlspecialchars($r['destinazione']);
-        $mezzo  = htmlspecialchars(isset($r['mezzo']) ? $r['mezzo'] : '—');
-        $per    = htmlspecialchars(isset($r['periodo']) ? $r['periodo'] : '—');
+        
+        $mezzoVal = '—';
+        if (isset($r['mezzo'])) {
+            $mezzoVal = $r['mezzo'];
+        }
+        $mezzo  = htmlspecialchars($mezzoVal);
+        
+        $perVal = '—';
+        if (isset($r['periodo'])) {
+            $perVal = $r['periodo'];
+        }
+        $per    = htmlspecialchars($perVal);
+        
         $costo  = number_format($r['costoAPersona'], 2, ',', '.');
         $autore = htmlspecialchars($r['Nome'] . ' ' . $r['Cognome']);
         $id     = (int)$r['idGita'];
@@ -192,8 +259,19 @@ if ($bozze1g && $bozze1g->num_rows > 0) {
 if ($bozze5g && $bozze5g->num_rows > 0) {
     while ($r = $bozze5g->fetch_assoc()) {
         $dest   = htmlspecialchars($r['destinazione']);
-        $mezzo  = htmlspecialchars(isset($r['mezzo']) ? $r['mezzo'] : '—');
-        $per    = htmlspecialchars(isset($r['periodo']) ? $r['periodo'] : '—');
+        
+        $mezzoVal = '—';
+        if (isset($r['mezzo'])) {
+            $mezzoVal = $r['mezzo'];
+        }
+        $mezzo  = htmlspecialchars($mezzoVal);
+        
+        $perVal = '—';
+        if (isset($r['periodo'])) {
+            $perVal = $r['periodo'];
+        }
+        $per    = htmlspecialchars($perVal);
+        
         $costo  = number_format($r['costoAPersona'], 2, ',', '.');
         $autore = htmlspecialchars($r['Nome'] . ' ' . $r['Cognome']);
         $id     = (int)$r['idGita'];
