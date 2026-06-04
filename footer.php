@@ -143,7 +143,7 @@
                 Sviluppato da: <strong>Natale Matteo</strong>, <strong>Alessandro Molinari</strong>, <strong>Giacomo Tronconi</strong>, <strong>Elisa Stanizzi</strong>
             </div>
             <div class="footer-year">
-                Copyright &copy; 2021
+                Copyright &copy; 2026
             </div>
         </div>
     </div>
