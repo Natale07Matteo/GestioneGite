@@ -173,9 +173,20 @@ function verificaTokenValido()
 
         // Token valido → aggiorna nome e foto in sessione (dati sempre freschi)
         $user = $data['data']['user'];
-        $nome    = trim(isset($user['name']) ? $user['name'] : '');
-        $cognome = trim(isset($user['surname']) ? $user['surname'] : '');
-        $foto    = trim(isset($user['profile_image']) ? $user['profile_image'] : '');
+        $nome = '';
+        if (isset($user['name'])) {
+            $nome = trim($user['name']);
+        }
+        
+        $cognome = '';
+        if (isset($user['surname'])) {
+            $cognome = trim($user['surname']);
+        }
+        
+        $foto = '';
+        if (isset($user['profile_image'])) {
+            $foto = trim($user['profile_image']);
+        }
 
         if ($nome || $cognome) {
             $_SESSION['username'] = trim($nome . ' ' . $cognome);
@@ -221,25 +232,48 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
         }
 
         // ─── 2. Estrae i dati utente ─────────────────────────────────────────────
-        $pUser = isset($data['data']['user']) ? $data['data']['user'] : null;
+        $pUser = null;
+        if (isset($data['data']['user'])) {
+            $pUser = $data['data']['user'];
+        }
 
         if (!$pUser || empty($pUser['id']) || empty($pUser['email'])) {
             error_log('[portal_auth gite] Dati utente mancanti nella risposta del portale.');
             return false;
         }
 
-        $portaleMail    = strtolower(trim($pUser['email']));
-        $portaleNome    = trim(isset($pUser['name']) ? $pUser['name'] : '');
-        $portaleCognome = trim(isset($pUser['surname']) ? $pUser['surname'] : '');
-        $portaleFoto    = trim(isset($pUser['profile_image']) ? $pUser['profile_image'] : '');
-        $portaleRuoli   = isset($pUser['roles']) ? $pUser['roles'] : [];
+        $portaleMail = strtolower(trim($pUser['email']));
+        
+        $portaleNome = '';
+        if (isset($pUser['name'])) {
+            $portaleNome = trim($pUser['name']);
+        }
+        
+        $portaleCognome = '';
+        if (isset($pUser['surname'])) {
+            $portaleCognome = trim($pUser['surname']);
+        }
+        
+        $portaleFoto = '';
+        if (isset($pUser['profile_image'])) {
+            $portaleFoto = trim($pUser['profile_image']);
+        }
+        
+        $portaleRuoli = [];
+        if (isset($pUser['roles'])) {
+            $portaleRuoli = $pUser['roles'];
+        }
 
         // ─── 3. Cerca il primo ruolo autorizzato ─────────────────────────────────
         $idTipoLocale = null;
         $ruoloTrovato = '';
 
         foreach ($portaleRuoli as $ruolo) {
-            $nomeRuolo = strtolower(trim(isset($ruolo['role_name']) ? $ruolo['role_name'] : ''));
+            $nomeRuoloRaw = '';
+            if (isset($ruolo['role_name'])) {
+                $nomeRuoloRaw = $ruolo['role_name'];
+            }
+            $nomeRuolo = strtolower(trim($nomeRuoloRaw));
             if (isset($PORTAL_ROLES[$nomeRuolo])) {
                 $idTipoLocale = $PORTAL_ROLES[$nomeRuolo];
                 $ruoloTrovato = $nomeRuolo;
@@ -248,9 +282,14 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
         }
 
         if ($idTipoLocale === null) {
-            $ruoliUtente = array_map(function ($r) {
-                return isset($r['role_name']) ? $r['role_name'] : '?';
-            }, $portaleRuoli);
+            $ruoliUtente = [];
+            foreach ($portaleRuoli as $r) {
+                if (isset($r['role_name'])) {
+                    $ruoliUtente[] = $r['role_name'];
+                } else {
+                    $ruoliUtente[] = '?';
+                }
+            }
             error_log('[portal_auth gite] Ruolo non autorizzato per ' . $portaleMail . ': ' . implode(', ', $ruoliUtente));
             return 'Il tuo ruolo sul portale (<strong>' . htmlspecialchars(implode(', ', $ruoliUtente)) . '</strong>) non è autorizzato per questa applicazione. Contatta un amministratore.';
         }
@@ -349,8 +388,15 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
         }
 
         // ─── 6. Aggiorna nome e cognome nel DB ───────────────────────────────────
-        $nomeAggiornato    = $portaleNome    ?: $utente['Nome'];
-        $cognomeAggiornato = $portaleCognome ?: $utente['Cognome'];
+        $nomeAggiornato = $utente['Nome'];
+        if ($portaleNome) {
+            $nomeAggiornato = $portaleNome;
+        }
+        
+        $cognomeAggiornato = $utente['Cognome'];
+        if ($portaleCognome) {
+            $cognomeAggiornato = $portaleCognome;
+        }
 
         $stmt = $conn->prepare("UPDATE utente SET Nome = ?, Cognome = ? WHERE IDUtente = ?");
         if ($stmt === false) {
@@ -376,7 +422,12 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
         $_SESSION['id_utente'] = $utente['IDUtente'];
         $_SESSION['username']  = $nomeAggiornato . ' ' . $cognomeAggiornato;
         $_SESSION['ruolo']     = (int) $utente['IDTipo'];
-        $_SESSION['foto']      = $portaleFoto ?: null;
+        
+        $sessionFoto = null;
+        if ($portaleFoto) {
+            $sessionFoto = $portaleFoto;
+        }
+        $_SESSION['foto'] = $sessionFoto;
 
         error_log('[portal_auth gite] Login riuscito: ' . $portaleMail . ' (IDTipo: ' . $utente['IDTipo'] . ')');
 

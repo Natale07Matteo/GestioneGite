@@ -12,7 +12,11 @@ $idUtente = (int)$_SESSION['id_utente'];
 
 // carica dati utente dal database
 $risultato = $conn->query("SELECT Nome, Cognome, Mail, IDTipo FROM utente WHERE IDUtente = $idUtente");
-$utente = $risultato ? $risultato->fetch_assoc() : null;
+
+$utente = null;
+if ($risultato) {
+    $utente = $risultato->fetch_assoc();
+}
 
 if (!$utente) {
     header("Location: login.php");
@@ -21,19 +25,59 @@ if (!$utente) {
 
 // conta proposte e organizzazione per utente (1g)
 $conta1g = $conn->query("SELECT COUNT(CASE WHEN idStato IN (1,2,3) THEN 1 END) AS proposte, COUNT(CASE WHEN idStato = 4 THEN 1 END) AS organizza FROM gita1g WHERE idUtente = $idUtente");
-$c1 = $conta1g ? $conta1g->fetch_assoc() : [];
+$c1 = array();
+if ($conta1g) {
+    $c1 = $conta1g->fetch_assoc();
+}
 
 // conta proposte e organizzazione per utente (5g)
 $conta5g = $conn->query("SELECT COUNT(CASE WHEN idStato IN (1,2,3) THEN 1 END) AS proposte, COUNT(CASE WHEN idStato = 4 THEN 1 END) AS organizza FROM gite5 WHERE idUtente = $idUtente");
-$c5 = $conta5g ? $conta5g->fetch_assoc() : [];
+$c5 = array();
+if ($conta5g) {
+    $c5 = $conta5g->fetch_assoc();
+}
 
-$totProposte = (isset($c1['proposte']) ? $c1['proposte'] : 0) + (isset($c5['proposte']) ? $c5['proposte'] : 0);
-$totOrganizzazione = (isset($c1['organizza']) ? $c1['organizza'] : 0) + (isset($c5['organizza']) ? $c5['organizza'] : 0);
+// Calcolo proposte
+$prop1 = 0;
+if (isset($c1['proposte'])) { $prop1 = $c1['proposte']; }
+
+$prop5 = 0;
+if (isset($c5['proposte'])) { $prop5 = $c5['proposte']; }
+
+$totProposte = $prop1 + $prop5;
+
+// Calcolo organizzazione
+$org1 = 0;
+if (isset($c1['organizza'])) { $org1 = $c1['organizza']; }
+
+$org5 = 0;
+if (isset($c5['organizza'])) { $org5 = $c5['organizza']; }
+
+$totOrganizzazione = $org1 + $org5;
 
 // conta gite dove e accompagnatore (ma non autore)
 $accomp1g = $conn->query("SELECT COUNT(*) AS tot FROM accompagnatori a JOIN gita1g g ON a.idgita = g.idGita AND a.tipo_gita = '1g' WHERE a.idutente = $idUtente AND g.idUtente <> $idUtente");
+$totAccomp1 = 0;
+if ($accomp1g) {
+    $r1 = $accomp1g->fetch_assoc();
+    $totAccomp1 = $r1['tot'];
+}
+
 $accomp5g = $conn->query("SELECT COUNT(*) AS tot FROM accompagnatori a JOIN gite5 g ON a.idgita = g.idGita AND a.tipo_gita = '5g' WHERE a.idutente = $idUtente AND g.idUtente <> $idUtente");
-$totAccompagnatore = ($accomp1g ? $accomp1g->fetch_assoc()['tot'] : 0) + ($accomp5g ? $accomp5g->fetch_assoc()['tot'] : 0);
+$totAccomp5 = 0;
+if ($accomp5g) {
+    $r5 = $accomp5g->fetch_assoc();
+    $totAccomp5 = $r5['tot'];
+}
+
+$totAccompagnatore = $totAccomp1 + $totAccomp5;
+
+// Preparazione variabile tipo utente
+$idTipoUtente = 1;
+if (isset($utente['IDTipo'])) {
+    $idTipoUtente = $utente['IDTipo'];
+}
+$nomeRuoloProfilo = nomeRuolo($idTipoUtente);
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -170,7 +214,7 @@ $totAccompagnatore = ($accomp1g ? $accomp1g->fetch_assoc()['tot'] : 0) + ($accom
             <?php endif; ?>
             <div>
                 <h2 class="profilo-nome"><?php echo htmlspecialchars($utente['Nome'] . ' ' . $utente['Cognome']); ?></h2>
-                <span class="profilo-ruolo"><?php echo nomeRuolo(isset($utente['IDTipo']) ? $utente['IDTipo'] : 1); ?></span>
+                <span class="profilo-ruolo"><?php echo $nomeRuoloProfilo; ?></span>
             </div>
         </div>
 

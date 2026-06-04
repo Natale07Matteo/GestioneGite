@@ -52,11 +52,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // elimina solo per commissione
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'elimina' && $ruolo == 2) {
-    $idGita = isset($_POST['id_gita']) ? (int)$_POST['id_gita'] : 0;
-    $tab    = $_POST['tabella'] === 'gite5' ? 'gite5' : 'gita1g';
+    $idGita = 0;
+    if (isset($_POST['id_gita'])) {
+        $idGita = (int)$_POST['id_gita'];
+    }
+    
+    $tab = 'gita1g';
+    if ($_POST['tabella'] === 'gite5') {
+        $tab = 'gite5';
+    }
+
     if ($idGita > 0) {
+        $tipoDel = '1g';
+        if ($tab === 'gite5') {
+            $tipoDel = '5g';
+        }
         mysqli_query($conn, "DELETE FROM $tab WHERE idGita = $idGita");
-        mysqli_query($conn, "DELETE FROM accompagnatori WHERE idgita = $idGita AND tipo_gita = '" . ($tab === 'gite5' ? '5g' : '1g') . "'");
+        mysqli_query($conn, "DELETE FROM accompagnatori WHERE idgita = $idGita AND tipo_gita = '$tipoDel'");
     }
     header("Location: inProgramma.php");
     exit;

@@ -1,33 +1,108 @@
+
 <?php
 session_start();
 require_once('config.php');
 
-$ruolo       = isset($_SESSION['ruolo'])     ? $_SESSION['ruolo']     : 0;
-$nome_utente = isset($_SESSION['username'])  ? $_SESSION['username']  : '';
-$idUtente    = isset($_SESSION['id_utente']) ? (int)$_SESSION['id_utente'] : 0;
+// Recupero dei dati di sessione con controlli espliciti
+$ruolo = 0;
+if (isset($_SESSION['ruolo'])) {
+    $ruolo = $_SESSION['ruolo'];
+}
 
+$nome_utente = '';
+if (isset($_SESSION['username'])) {
+    $nome_utente = $_SESSION['username'];
+}
+
+$idUtente = 0;
+if (isset($_SESSION['id_utente'])) {
+    $idUtente = (int)$_SESSION['id_utente'];
+}
+
+// Inizializzazione contatori
 $totProposte     = 0;
 $totOrg          = 0;
 $totInProgramma  = 0;
 $totBozze        = 0;
 
-if ($ruolo) {
+// Se l'utente è loggato, calcola le statistiche
+if ($ruolo > 0) {
+    // 1. Conteggio Proposte e Gite in Organizzazione per le Gite di 1 Giorno
     $res1 = $conn->query("SELECT COUNT(CASE WHEN idStato IN (1,2,3) THEN 1 END) AS prop, COUNT(CASE WHEN idStato = 4 THEN 1 END) AS org FROM gita1g WHERE idUtente = $idUtente");
-    $c1 = $res1 ? $res1->fetch_assoc() : [];
+    $c1 = array();
+    if ($res1) {
+        $c1 = $res1->fetch_assoc();
+    }
+    
+    // 2. Conteggio Proposte e Gite in Organizzazione per le Gite di 5 Giorni
     $res5 = $conn->query("SELECT COUNT(CASE WHEN idStato IN (1,2,3) THEN 1 END) AS prop, COUNT(CASE WHEN idStato = 4 THEN 1 END) AS org FROM gite5 WHERE idUtente = $idUtente");
-    $c5 = $res5 ? $res5->fetch_assoc() : [];
-    $totProposte = (isset($c1['prop']) ? $c1['prop'] : 0) + (isset($c5['prop']) ? $c5['prop'] : 0);
-    $totOrg = (isset($c1['org']) ? $c1['org'] : 0) + (isset($c5['org']) ? $c5['org'] : 0);
+    $c5 = array();
+    if ($res5) {
+        $c5 = $res5->fetch_assoc();
+    }
 
+    // Somma parziale proposte
+    $prop1 = 0;
+    if (isset($c1['prop'])) { $prop1 = $c1['prop']; }
+    
+    $prop5 = 0;
+    if (isset($c5['prop'])) { $prop5 = $c5['prop']; }
+    
+    $totProposte = $prop1 + $prop5;
+
+    // Somma parziale organizzazione
+    $org1 = 0;
+    if (isset($c1['org'])) { $org1 = $c1['org']; }
+    
+    $org5 = 0;
+    if (isset($c5['org'])) { $org5 = $c5['org']; }
+    
+    $totOrg = $org1 + $org5;
+
+    // 3. Conteggio Gite In Programma (Stato 4)
     $resProg1 = $conn->query("SELECT COUNT(*) AS tot FROM gita1g WHERE idStato = 4");
-    $resProg5 = $conn->query("SELECT COUNT(*) AS tot FROM gite5 WHERE idStato = 4");
-    $totInProgramma = ($resProg1 ? $resProg1->fetch_assoc()['tot'] : 0) + ($resProg5 ? $resProg5->fetch_assoc()['tot'] : 0);
+    $prog1 = 0;
+    if ($resProg1) {
+        $r1 = $resProg1->fetch_assoc();
+        $prog1 = $r1['tot'];
+    }
 
+    $resProg5 = $conn->query("SELECT COUNT(*) AS tot FROM gite5 WHERE idStato = 4");
+    $prog5 = 0;
+    if ($resProg5) {
+        $r5 = $resProg5->fetch_assoc();
+        $prog5 = $r5['tot'];
+    }
+    $totInProgramma = $prog1 + $prog5;
+
+    // 4. Se l'utente è della Commissione, conta le Bozze in attesa (Stato 1)
     if ($ruolo == 2) {
         $resBozze1 = $conn->query("SELECT COUNT(*) AS tot FROM gita1g WHERE idStato = 1");
+        $bozze1 = 0;
+        if ($resBozze1) {
+            $rb1 = $resBozze1->fetch_assoc();
+            $bozze1 = $rb1['tot'];
+        }
+
         $resBozze5 = $conn->query("SELECT COUNT(*) AS tot FROM gite5 WHERE idStato = 1");
-        $totBozze = ($resBozze1 ? $resBozze1->fetch_assoc()['tot'] : 0) + ($resBozze5 ? $resBozze5->fetch_assoc()['tot'] : 0);
+        $bozze5 = 0;
+        if ($resBozze5) {
+            $rb5 = $resBozze5->fetch_assoc();
+            $bozze5 = $rb5['tot'];
+        }
+        $totBozze = $bozze1 + $bozze5;
     }
+}
+
+// Preparazione delle classi CSS dinamiche per evitare ternari nell'HTML
+$gridClass = 'grid-3-cols';
+if ($ruolo == 2) {
+    $gridClass = 'grid-4-cols';
+}
+
+$coloreBozze = 'var(--blue-600)';
+if ($totBozze > 0) {
+    $coloreBozze = 'var(--hex-orange)';
 }
 ?>
 <!DOCTYPE html>
@@ -79,7 +154,7 @@ if ($ruolo) {
                 </p>
             </div>
             <!-- riepilogo numerico -->
-            <div class="home-grid <?php echo ($ruolo == 2) ? 'grid-4-cols' : 'grid-3-cols'; ?>" style="margin-bottom: 2rem; margin-top: 0;">
+            <div class="home-grid <?php echo $gridClass; ?>" style="margin-bottom: 2rem; margin-top: 0;">
                 <div class="card stat-card" onclick="window.location.href='mieGite.php'" style="text-align:center;padding:1.2rem;">
                     <span style="font-size:2rem;font-weight:700;color:var(--blue-600);"><?php echo $totProposte; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Le mie proposte</p>
@@ -94,13 +169,13 @@ if ($ruolo) {
                 </div>
                 <?php if ($ruolo == 2): ?>
                 <div class="card stat-card" onclick="window.location.href='elencoBozze.php'" style="text-align:center;padding:1.2rem;">
-                    <span style="font-size:2rem;font-weight:700;color:<?php echo $totBozze > 0 ? 'var(--hex-orange)' : 'var(--blue-600)'; ?>;"><?php echo $totBozze; ?></span>
+                    <span style="font-size:2rem;font-weight:700;color:<?php echo $coloreBozze; ?>;"><?php echo $totBozze; ?></span>
                     <p style="font-size:0.85rem;color:var(--my-gray);margin-top:0.3rem;">Bozze in attesa</p>
                 </div>
                 <?php endif; ?>
             </div>
             <!-- card navigazione -->
-            <div class="home-grid <?php echo ($ruolo == 2) ? 'grid-4-cols' : 'grid-3-cols'; ?>" style="margin-top: 2rem;">
+            <div class="home-grid <?php echo $gridClass; ?>" style="margin-top: 2rem;">
                 <div class="card">
                     <div class="card-header">
                         <h3>Proposte</h3>
@@ -149,6 +224,7 @@ if ($ruolo) {
                 <?php endif; ?>
             </div>
 <?php endif; ?>
+
         </main>
         <?php include('footer.php'); ?>
     </div>

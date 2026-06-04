@@ -1,3 +1,4 @@
+
 <?php
     @session_start();
     require_once('config.php');
@@ -16,10 +17,12 @@
     }
 
     // ─── Validazione token su ogni caricamento pagina ────────────────────────
-    if (isset($_SESSION['ruolo']) && $_SESSION['ruolo']) {
-        // Utente loggato → verifica che il token sia ancora valido (salta per mock login)
-        if (empty($_SESSION['mock'])) {
-            verificaTokenValido();
+    if (isset($_SESSION['ruolo'])) {
+        if ($_SESSION['ruolo']) {
+            // Utente loggato → verifica che il token sia ancora valido (salta per mock login)
+            if (empty($_SESSION['mock'])) {
+                verificaTokenValido();
+            }
         }
     } else {
         // Non loggato → tenta auto-login dal cookie (silenzioso, no redirect)
@@ -29,20 +32,63 @@
         }
     }
 
-    $nome_utente = isset($_SESSION['username']) ? $_SESSION['username'] : 'Utente Sconosciuto';
-    $ruolo = isset($_SESSION['ruolo']) ? $_SESSION['ruolo'] : null;
-    $foto_utente = isset($_SESSION['foto']) ? $_SESSION['foto'] : '';
+    // Variabili utente
+    $nome_utente = 'Utente Sconosciuto';
+    if (isset($_SESSION['username'])) {
+        $nome_utente = $_SESSION['username'];
+    }
 
-    // protezione per chi non e loggato
-    if (!$ruolo && $paginaCorrente != 'login.php' && $paginaCorrente != 'index.php') {
-        header("Location: login.php");
-        exit;
+    $ruolo = null;
+    if (isset($_SESSION['ruolo'])) {
+        $ruolo = $_SESSION['ruolo'];
+    }
+
+    $foto_utente = '';
+    if (isset($_SESSION['foto'])) {
+        $foto_utente = $_SESSION['foto'];
+    }
+
+    // protezione per chi non è loggato
+    if (!$ruolo) {
+        if ($paginaCorrente != 'login.php') {
+            if ($paginaCorrente != 'index.php') {
+                header("Location: login.php");
+                exit;
+            }
+        }
     }
 
     // protezione per pagine riservate alla commissione
-    if ($ruolo == 1 && $paginaCorrente == 'elencoBozze.php') {
-        header("Location: index.php");
-        exit;
+    if ($ruolo == 1) {
+        if ($paginaCorrente == 'elencoBozze.php') {
+            header("Location: index.php");
+            exit;
+        }
+    }
+
+    // Variabili per l'evidenziazione del menu corrente (active)
+    $active_index = '';
+    if ($paginaCorrente == 'index.php') { $active_index = 'active'; }
+
+    $active_catalogo = '';
+    if ($paginaCorrente == 'catalogo.php') { $active_catalogo = 'active'; }
+
+    $active_mieGite = '';
+    if ($paginaCorrente == 'mieGite.php') { $active_mieGite = 'active'; }
+
+    $active_inProgramma = '';
+    if ($paginaCorrente == 'inProgramma.php') { $active_inProgramma = 'active'; }
+
+    $active_elencoBozze = '';
+    if ($paginaCorrente == 'elencoBozze.php') { $active_elencoBozze = 'active'; }
+
+    $active_login = '';
+    if ($paginaCorrente == 'login.php') { $active_login = 'active'; }
+
+    // Variabile per il nome testuale del ruolo
+    $ruoloTestuale = 'Docente';
+    if ($ruolo == 2) {
+        $ruoloTestuale = 'Commissione';
     }
 ?>
 
@@ -105,16 +151,19 @@
     </div>
     
     <nav class="header-nav">
-        <a href="index.php" class="<?php echo ($paginaCorrente == 'index.php') ? 'active' : ''; ?>">Home</a>
+        <a href="index.php" class="<?php echo $active_index; ?>">Home</a>
+        
         <?php if ($ruolo): ?>
-            <a href="catalogo.php" class="<?php echo ($paginaCorrente == 'catalogo.php') ? 'active' : ''; ?>">Proposte</a>
-            <a href="mieGite.php" class="<?php echo ($paginaCorrente == 'mieGite.php') ? 'active' : ''; ?>">Le mie Gite</a>
-            <a href="inProgramma.php" class="<?php echo ($paginaCorrente == 'inProgramma.php') ? 'active' : ''; ?>">In Programma</a>
+            <a href="catalogo.php" class="<?php echo $active_catalogo; ?>">Proposte</a>
+            <a href="mieGite.php" class="<?php echo $active_mieGite; ?>">Le mie Gite</a>
+            <a href="inProgramma.php" class="<?php echo $active_inProgramma; ?>">In Programma</a>
+            
             <?php if ($ruolo == 2): ?>
-                <a href="elencoBozze.php" class="<?php echo ($paginaCorrente == 'elencoBozze.php') ? 'active' : ''; ?>">Bozze</a>
+                <a href="elencoBozze.php" class="<?php echo $active_elencoBozze; ?>">Bozze</a>
             <?php endif; ?>
+            
         <?php else: ?>
-            <a href="login.php" class="<?php echo ($paginaCorrente == 'login.php') ? 'active' : ''; ?>">Accedi</a>
+            <a href="login.php" class="<?php echo $active_login; ?>">Accedi</a>
         <?php endif; ?>
     </nav>
 
@@ -128,7 +177,9 @@
                 <?php endif; ?>
                 <div class="profile-info">
                     <span class="user-name"><?php echo htmlspecialchars($nome_utente); ?></span>
-                    <span class="user-role"><?php echo ($ruolo == 2) ? 'Commissione' : 'Docente'; ?></span>
+                    <span class="user-role"><?php echo $ruoloTestuale; ?></span>
+                </div>
+mmissione' : 'Docente'; ?></span>
                 </div>
                 <div class="profile-arrow" id="frecciaTendina">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="white">
