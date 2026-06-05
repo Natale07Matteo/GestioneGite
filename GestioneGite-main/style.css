@@ -1,0 +1,222 @@
+:root {
+    
+    --blue-50:  #EFF6FF;
+    --blue-100: #DBEAFE;
+    --blue-200: #BFDBFE;
+    --blue-400: #60A5FA;
+    --blue-500: #3B82F6;
+    --blue-600: #2563EB;
+    --blue-700: #1D4ED8;
+    --blue-900: #1E3A5F;
+
+    
+    --color-primary:        var(--blue-600);
+    --color-primary-hover:  var(--blue-700);
+    --color-secondary:      var(--blue-400);
+    --color-accent:         var(--blue-200);
+    --color-surface:        var(--blue-50);
+    --color-surface-hover:  var(--blue-100);
+
+    
+    --my-white:      #ffffff;
+    --my-white-h:    var(--blue-100);
+    --my-icy-blue:   var(--blue-100);
+    --my-blue:       var(--blue-600);
+    --my-dark-blue:  var(--blue-900);
+    --my-gray:       #6B7280;
+    --my-green:      #16A34A;
+    --my-red:        #DC2626;
+    --my-yellow:     #EAB308;
+    --my-background: var(--blue-50);
+    --pro:           var(--blue-400);
+
+    --hex-dark-blue:   var(--blue-700);
+    --hex-red:         #DC2626;
+    --hex-orange:      #F97316;
+    --hex-yellow:      #EAB308;
+    --hex-dark-green:  #16A34A;
+    --hex-light-green: #86EFAC;
+    --hex-light-blue:  var(--blue-400);
+    --hex-blue:        var(--blue-600);
+    --hex-purple:      #7C3AED;
+
+    
+    --radius:   30px;
+    --radius-1: 16px;
+
+    --header-color:       var(--blue-700);
+    --header-color-hover: var(--blue-900);
+    --footer-color:       var(--blue-800, #1E40AF);
+    --text-on-light:      var(--blue-900);
+    --text-on-primary:    #ffffff;
+    --link-color:         var(--blue-600);
+    --link-hover-color:   var(--blue-700);
+    --header-height: 6.5rem;
+
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+
+    
+    --h1: 3rem;
+    --h2: 2.5rem;
+    --h3: 2rem;
+    --h4: 1.5rem;
+    --p: 1rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+body {
+    background: var(--my-background);
+    color: var(--text-on-light);
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    width: 100%;
+    height: var(--header-height);
+    background: var(--header-color);
+    display: flex;
+    align-items: center;
+}
+
+footer {
+    width: 100%;
+    background: var(--blue-700);
+    padding: 2rem 0;
+    color: var(--text-on-primary);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: var(--my-white);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+}
+
+.footer-links a:hover {
+    opacity: 0.8;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .footer-links {
+        justify-content: center;
+        gap: 1.5rem;
+    }
+}
+
+h1, h2, h3, h4, p, a {
+    margin: 0;
+    color: inherit;
+}
+
+h1 {
+    font-size: var(--h1);
+    font-weight: 700;
+}
+
+h2 {
+    font-size: var(--h2);
+    font-weight: 600;
+}
+
+h3 {
+    font-size: var(--h3);
+    font-weight: 500;
+}
+
+h4 {
+    font-size: var(--h4);
+    font-weight: normal;
+}
+
+p, a {
+    font-size: var(--p);
+    font-weight: normal;
+}
+
+a {
+    color: var(--link-color);
+}
+
+a:hover {
+    color: var(--link-hover-color);
+}
+
+
+.header-container {
+    display: flex;
+    flex-grow: 1;
+
+    h2 {
+        line-height: var(--header-height);
+        flex-grow: 1;
+
+    }
+}
+
+.header-left {
+    margin-left: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.container {
+    width: 100%;
+    top: var(--header-height);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 1;
+    width: 100%;
+}
+
+
