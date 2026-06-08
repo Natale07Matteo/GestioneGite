@@ -292,6 +292,21 @@ $res5g = mysqli_query($conn,
 </div>
 <?php endif; ?>
 
+<div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem;">
+    <div class="search-bar-wrapper" style="margin-bottom: 0; max-width: 380px; width: 100%;">
+        <input type="text" id="cercaGite" onkeyup="cercaInTabelle('cercaGite', 'table')" placeholder="Cerca destinazione, mezzo, periodo, docente...">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+            <path d="M784-120 533-371q-30 24-74 37.5T367-320q-101 0-171-70t-70-171q0-101 70-171t171-70q101 0 171 70t70 171q0 48-13.5 92T533-533l251 251-50 50ZM367-400q67 0 113.5-46.5T527-560q0-67-46.5-113.5T367-720q-67 0-113.5 46.5T207-560q0 67 46.5 113.5T367-400Z"/>
+        </svg>
+    </div>
+    <a href="#gite-quinte" class="button outline" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: 99px; padding: 0.6rem 1.2rem; font-size: 0.88rem; transition: all 0.2s ease; height: auto; min-width: 0; line-height: 1;">
+        <span>vai a gite per le quinte</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+            <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/>
+        </svg>
+    </a>
+</div>
+
 <!-- gite 1 giorno -->
 <h3 style="color:var(--blue-700);margin-bottom:0.75rem;">Gite di un giorno</h3>
 <div class="table-section"><div class="table-container">
@@ -443,7 +458,7 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
 </div></div>
 
 <!-- gite piu giorni -->
-<h3 style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte</h3>
+<h3 id="gite-quinte" style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte</h3>
 <div class="table-section"><div class="table-container table-quinte">
 <table>
 <thead><tr>
