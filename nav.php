@@ -21,7 +21,7 @@
         if ($_SESSION['ruolo']) {
             // Utente loggato → verifica che il token sia ancora valido (salta per mock login)
             if (empty($_SESSION['mock'])) {
-                verificaTokenValido();
+                verificaTokenValido($conn, $PORTAL_ROLES);
             }
         }
     } else {

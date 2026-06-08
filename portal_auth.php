@@ -158,7 +158,7 @@ function chiamaPortaleAPI()
  *
  * @return void  (redirige e fa exit se il token non è valido)
  */
-function verificaTokenValido()
+function verificaTokenValido($conn, $PORTAL_ROLES)
 {
     try {
         $data = chiamaPortaleAPI();
@@ -194,6 +194,49 @@ function verificaTokenValido()
         if ($foto) {
             $_SESSION['foto'] = $foto;
         }
+
+        // Sincronizza il ruolo dell'utente se è cambiato sul portale
+        $portaleRuoli = [];
+        if (isset($user['roles'])) {
+            $portaleRuoli = $user['roles'];
+        }
+
+        $idTipoLocale = null;
+        foreach ($portaleRuoli as $ruolo) {
+            $nomeRuoloRaw = '';
+            if (isset($ruolo['role_name'])) {
+                $nomeRuoloRaw = $ruolo['role_name'];
+            }
+            $nomeRuolo = strtolower(trim($nomeRuoloRaw));
+            if (isset($PORTAL_ROLES[$nomeRuolo])) {
+                $val = $PORTAL_ROLES[$nomeRuolo];
+                if ($idTipoLocale === null || $val > $idTipoLocale) {
+                    $idTipoLocale = $val;
+                }
+            }
+        }
+
+        if ($idTipoLocale === null) {
+            // Nessun ruolo autorizzato trovato → logout forzato
+            session_unset();
+            session_destroy();
+            header('Location: ' . PORTALE_LOGOUT);
+            exit;
+        } else {
+            // Se il ruolo calcolato è diverso da quello attualmente in sessione, aggiorna
+            if (!isset($_SESSION['ruolo']) || $_SESSION['ruolo'] != $idTipoLocale) {
+                $_SESSION['ruolo'] = (int) $idTipoLocale;
+                if ($conn && isset($_SESSION['id_utente'])) {
+                    $stmt = $conn->prepare("UPDATE utente SET IDTipo = ? WHERE IDUtente = ?");
+                    if ($stmt) {
+                        $stmt->bind_param("ii", $idTipoLocale, $_SESSION['id_utente']);
+                        $stmt->execute();
+                        $stmt->close();
+                    }
+                }
+            }
+        }
+
     } catch (Exception $e) {
         echo '<div style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-family: monospace; margin: 10px 0; border-radius: 6px;">';
         echo '<strong>[DEBUG EXCEPTION - portal_auth]</strong> Eccezione catturata in verificaTokenValido(): ' . htmlspecialchars($e->getMessage()) . '<br>';
@@ -264,7 +307,7 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
             $portaleRuoli = $pUser['roles'];
         }
 
-        // ─── 3. Cerca il primo ruolo autorizzato ─────────────────────────────────
+        // ─── 3. Cerca il ruolo autorizzato con privilegio maggiore ───────────────
         $idTipoLocale = null;
         $ruoloTrovato = '';
 
@@ -275,9 +318,11 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
             }
             $nomeRuolo = strtolower(trim($nomeRuoloRaw));
             if (isset($PORTAL_ROLES[$nomeRuolo])) {
-                $idTipoLocale = $PORTAL_ROLES[$nomeRuolo];
-                $ruoloTrovato = $nomeRuolo;
-                break;
+                $val = $PORTAL_ROLES[$nomeRuolo];
+                if ($idTipoLocale === null || $val > $idTipoLocale) {
+                    $idTipoLocale = $val;
+                    $ruoloTrovato = $nomeRuolo;
+                }
             }
         }
 
