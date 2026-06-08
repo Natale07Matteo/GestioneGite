@@ -782,3 +782,17 @@ body:has(.modal-overlay:not(.hidden)) {
         text-align: left;
     }
 }
+
+/* Bottone di salto rapido alle quinte con bordo e testo blu scuro coerente */
+.button.outline-quinte {
+    background: transparent !important;
+    border: 2px solid #1e3a8a !important;
+    color: #1e3a8a !important;
+}
+
+.button.outline-quinte:hover {
+    background: #1e3a8a !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25) !important;
+}
+
