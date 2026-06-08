@@ -224,7 +224,7 @@ if ($totBozze > 0) {
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <h3>Gite in Programma</h3>
+                            <h3>In Programma</h3>
                         </div>
                         <div class="card-body">
                             <p>Elenco di tutte le gite attualmente in organizzazione.</p>
