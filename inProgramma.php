@@ -446,6 +446,8 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
                     <?php endif; ?>
                 <?php elseif ($riga['idStato'] == 5): ?>
                     <?php if ($ruolo == 2): ?>
+                        <div class="button xs" style="visibility: hidden; pointer-events: none;"></div>
+                        <div class="button xs" style="visibility: hidden; pointer-events: none;"></div>
                         <button type="button" class="button cancel xs"
                             data-id="<?php echo $id; ?>"
                             data-dest="<?php echo $dJ; ?>"
@@ -618,6 +620,8 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
                     <?php endif; ?>
                 <?php elseif ($riga['idStato'] == 5): ?>
                     <?php if ($ruolo == 2): ?>
+                        <div class="button xs" style="visibility: hidden; pointer-events: none;"></div>
+                        <div class="button xs" style="visibility: hidden; pointer-events: none;"></div>
                         <button type="button" class="button cancel xs"
                             data-id="<?php echo $id; ?>"
                             data-dest="<?php echo $dJ; ?>"
