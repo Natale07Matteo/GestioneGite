@@ -796,3 +796,22 @@ body:has(.modal-overlay:not(.hidden)) {
     box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25) !important;
 }
 
+/* Stile per le card delle gite per le quinte (più giorni) in Le Mie Gite */
+.miegite-card.card-quinte {
+    border: 1px solid #1e3a8a !important;
+    border-top: 5px solid #1e3a8a !important;
+}
+
+.badge-quinte {
+    background-color: #1e3a8a !important;
+    color: white !important;
+    font-size: 0.65rem !important;
+    padding: 0.15rem 0.5rem !important;
+    border-radius: 4px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    width: fit-content;
+    display: inline-block;
+}
+

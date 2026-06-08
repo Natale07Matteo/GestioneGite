@@ -781,9 +781,14 @@ function badgeClass($stato) {
                 $dataLabel = 'Date';
             }
         ?>
-        <div class="miegite-card">
+        <div class="miegite-card <?php echo $tipoTabella === '5g' ? 'card-quinte' : ''; ?>">
             <div class="miegite-card-header">
-                <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <?php if ($tipoTabella === '5g'): ?>
+                        <span class="badge-quinte">Quinte</span>
+                    <?php endif; ?>
+                    <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
+                </div>
                 <?php
                 if ($riga['tipo'] === '1g') {
                     echo badgeStatoHtml($riga['idStato'], isset($riga['giorno']) ? $riga['giorno'] : null);
@@ -937,9 +942,14 @@ function badgeClass($stato) {
                 if (isset($riga['costoAPersona'])) { $costoAPRaw = $riga['costoAPersona']; }
             }
         ?>
-        <div class="miegite-card">
+        <div class="miegite-card <?php echo $tipoTabella === '5g' ? 'card-quinte' : ''; ?>">
             <div class="miegite-card-header">
-                <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
+                <div style="display:flex; flex-direction:column; gap:0.25rem;">
+                    <?php if ($tipoTabella === '5g'): ?>
+                        <span class="badge-quinte">Quinte</span>
+                    <?php endif; ?>
+                    <h4 class="miegite-card-title"><?php echo $dest; ?></h4>
+                </div>
                 <?php
                 if ($riga['tipo'] === '1g') {
                     echo badgeStatoHtml($riga['idStato'], isset($riga['giorno']) ? $riga['giorno'] : null);
