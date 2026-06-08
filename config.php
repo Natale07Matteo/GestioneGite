@@ -27,6 +27,16 @@ if (!$conn) {
     die("Connessione fallita: " . mysqli_connect_error());
 }
 
+// Migrazione automatica: crea la colonna 'motivazione' se non esiste
+$check_1g = $conn->query("SHOW COLUMNS FROM gita1g LIKE 'motivazione'");
+if ($check_1g && $check_1g->num_rows == 0) {
+    $conn->query("ALTER TABLE gita1g ADD COLUMN motivazione VARCHAR(255) DEFAULT NULL");
+}
+$check_5g = $conn->query("SHOW COLUMNS FROM gite5 LIKE 'motivazione'");
+if ($check_5g && $check_5g->num_rows == 0) {
+    $conn->query("ALTER TABLE gite5 ADD COLUMN motivazione VARCHAR(255) DEFAULT NULL");
+}
+
 // ------------------------------------------------------------------
 // AGGIORNAMENTO AUTOMATICO GITE CONCLUSE
 // ------------------------------------------------------------------

@@ -66,6 +66,7 @@ CREATE TABLE `gita1g` (
   `costoAPersona` decimal(10,2) DEFAULT NULL,
   `numAlunni` int(11) DEFAULT NULL,
   `classi` varchar(20) DEFAULT NULL,
+  `motivazione` varchar(255) DEFAULT NULL,
   `idStato` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -98,6 +99,7 @@ CREATE TABLE `gite5` (
   `costoAPersona` decimal(10,2) DEFAULT NULL,
   `numAlunni` int(11) DEFAULT NULL,
   `classi` varchar(20) DEFAULT NULL,
+  `motivazione` varchar(255) DEFAULT NULL,
   `idStato` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
