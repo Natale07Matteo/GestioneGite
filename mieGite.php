@@ -1032,7 +1032,6 @@ function badgeClass($stato) {
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3 id="modOrg1gTitle">Modifica Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="document.getElementById('modalModOrg1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formModOrg1g" method="POST" action="mieGite.php">
@@ -1099,7 +1098,6 @@ function badgeClass($stato) {
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3 id="modOrg5gTitle">Modifica Gita Più Giorni</h3>
-    <button class="close-btn" onclick="document.getElementById('modalModOrg5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formModOrg5g" method="POST" action="mieGite.php">
@@ -1160,9 +1158,6 @@ function badgeClass($stato) {
 <!-- modal: modifica salvata -->
 <div class="modal-overlay hidden" id="modalModOrgOk">
 <div class="modal" style="text-align:center;max-width:400px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalModOrgOk').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Modifiche Salvate</h3>
     <p style="color:#475569;">I dati della gita sono stati aggiornati con successo. Visualizza in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
@@ -1178,7 +1173,6 @@ function badgeClass($stato) {
 <div class="modal">
 <div class="modal-header">
     <h3 id="modTitolo">Modifica Proposta</h3>
-    <button class="close-btn" onclick="chiudiModifica()">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formModifica" method="POST" action="mieGite.php">
@@ -1214,9 +1208,6 @@ function badgeClass($stato) {
 <!-- modal: conferma elimina -->
 <div class="modal-overlay hidden" id="modalElimina">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudiElimina()">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Eliminazione</h3>
     <p style="color:var(--blue-900);margin-bottom:0.5rem;">Sei sicuro di voler eliminare la gita verso:</p>
@@ -1239,7 +1230,6 @@ function badgeClass($stato) {
 <div class="modal">
 <div class="modal-header">
     <h3 id="org1g_title">Organizza Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="document.getElementById('modalOrg1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -1308,7 +1298,6 @@ function badgeClass($stato) {
 <div class="modal">
 <div class="modal-header">
     <h3 id="org5g_title">Organizza Gita Più Giorni</h3>
-    <button class="close-btn" onclick="document.getElementById('modalOrg5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -1372,9 +1361,6 @@ function badgeClass($stato) {
 <!-- modal: organizzata con successo -->
 <div class="modal-overlay hidden" id="modalOrganizzaOk">
 <div class="modal" style="text-align:center;max-width:400px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalOrganizzaOk').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Gita Organizzata</h3>
     <p style="color:#475569;">La gita è stata messa in organizzazione con successo. La trovi ora in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
@@ -1388,9 +1374,6 @@ function badgeClass($stato) {
 <!-- modal: riproposta salvata -->
 <div class="modal-overlay hidden" id="modalRiproponiOk">
 <div class="modal" style="text-align:center;max-width:400px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalRiproponiOk').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Proposta Inviata</h3>
     <p style="color:#475569;">La gita è stata rimessa in bozza e inviata per approvazione. Puoi seguirne lo stato in <a href="mieGite.php" style="color:var(--blue-600);text-decoration:underline;font-weight:bold;">Le mie Gite</a>.</p>
@@ -1404,9 +1387,6 @@ function badgeClass($stato) {
 <!-- modal: eliminata -->
 <div class="modal-overlay hidden" id="modalEliminataOk">
 <div class="modal" style="text-align:center;max-width:400px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalEliminataOk').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:#dc2626;margin-bottom:0.5rem;">Gita Eliminata</h3>
     <p style="color:#475569;">La proposta è stata eliminata correttamente.</p>
@@ -1420,9 +1400,6 @@ function badgeClass($stato) {
 <!-- modal: errore validazione -->
 <div class="modal-overlay hidden" id="modalErroreValidazione">
 <div class="modal" style="text-align:center;max-width:400px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalErroreValidazione').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:#dc2626;margin-bottom:0.5rem;">Errore di Validazione</h3>
     <p style="color:#475569;">I dati inseriti non sono validi o sono incompleti. Controlla che le date siano corrette e tutti i campi obbligatori siano compilati.</p>
@@ -1436,9 +1413,6 @@ function badgeClass($stato) {
 <!-- modal: conferma archiviazione -->
 <div class="modal-overlay hidden" id="modalArchivia">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudiArchivia()">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Rimozione</h3>
     <p style="color:var(--blue-900);margin-bottom:0.5rem;">Vuoi rimuovere questa gita conclusa verso:</p>
@@ -1466,7 +1440,6 @@ function badgeClass($stato) {
 <div class="modal" style="max-width:480px;">
 <div class="modal-header">
     <h3 id="accModalTit">Accompagnatori</h3>
-    <button class="close-btn" onclick="document.getElementById('modalAccompagnatori').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
     <div id="accModalList"></div>
@@ -1687,9 +1660,6 @@ function apriConfermaAzione(azione, idGita, tipoGita, dest) {
 <!-- modal: conferma partecipa / disiscriviti -->
 <div class="modal-overlay hidden" id="modalConfAzione">
 <div class="modal" style="text-align:center;max-width:420px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalConfAzione').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 id="confAzioneTitolo" style="margin-bottom:0.5rem;"></h3>
     <p id="confAzioneMessaggio" style="color:#475569;"></p>

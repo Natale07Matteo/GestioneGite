@@ -281,7 +281,6 @@ FILE DI ANGELO
     <div class="modal">
         <div class="modal-header">
             <h3>Modal Title</h3>
-            <button class="close-btn" onclick="closeModal('demo-modal')">&times;</button>
         </div>
         <div class="modal-body">
             <p>This is a modal window. You can put any content here.</p>

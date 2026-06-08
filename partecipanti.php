@@ -477,7 +477,6 @@ if (isset($gita['numAlunni'])) {
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3 id="modAccTit">Modifica dati documento</h3>
-    <button class="close-btn" onclick="document.getElementById('modalModAcc').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formModAcc" method="POST" action="partecipanti.php?id=<?php echo $idGita; ?>">
@@ -519,7 +518,6 @@ if (isset($gita['numAlunni'])) {
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3>Aggiungi Partecipante</h3>
-    <button class="close-btn" onclick="document.getElementById('modalAggiungi').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formAggiungi" method="POST" action="partecipanti.php?id=<?php echo $idGita; ?>">
@@ -582,9 +580,6 @@ if (isset($gita['numAlunni'])) {
 <!-- modal: conferma rimozione accompagnatore -->
 <div class="modal-overlay hidden" id="modalRimuoviAcc">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalRimuoviAcc').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Rimozione</h3>
     <p style="color:var(--blue-900);">Rimuovere l'accompagnatore <strong id="rimuoviAccNome"></strong>?</p>
@@ -603,9 +598,6 @@ if (isset($gita['numAlunni'])) {
 <!-- modal: conferma rimozione partecipante -->
 <div class="modal-overlay hidden" id="modalRimuoviPart">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalRimuoviPart').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Rimozione</h3>
     <p style="color:var(--blue-900);">Rimuovere il partecipante <strong id="rimuoviPartNome"></strong>?</p>

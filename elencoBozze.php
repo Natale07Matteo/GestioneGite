@@ -300,9 +300,6 @@ if ($bozze5g && $bozze5g->num_rows > 0) {
 <!-- modal conferma approva boccia -->
 <div class="modal-overlay hidden" id="modalConferma">
 <div class="modal" style="max-width:450px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button type="button" class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudiConferma()">&times;</button>
-</div>
 <form method="POST" id="formConferma" style="margin:0;">
     <input type="hidden" name="action"   id="confTabella">
     <input type="hidden" name="id_gita"  id="confIdGita">

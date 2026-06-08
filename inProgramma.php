@@ -649,9 +649,6 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
 <!-- modal: conferma elimina -->
 <div class="modal-overlay hidden" id="modalElimina">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="chiudi('modalElimina')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Eliminazione</h3>
     <p style="color:var(--blue-900);margin-bottom:0.5rem;">Stai per eliminare la gita:</p>
@@ -675,7 +672,6 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3 id="modTit1g">Modifica Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="chiudi('modalMod1g')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formMod1g" method="POST" action="inProgramma.php">
@@ -742,7 +738,6 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
 <div class="modal wide-modal">
 <div class="modal-header">
     <h3 id="modTit5g">Modifica Gita Più Giorni</h3>
-    <button class="close-btn" onclick="chiudi('modalMod5g')">&times;</button>
 </div>
 <div class="modal-body">
 <form id="formMod5g" method="POST" action="inProgramma.php">
@@ -858,9 +853,6 @@ function apriMod5g(btn) {
 <!-- modal: conferma partecipa / disiscriviti -->
 <div class="modal-overlay hidden" id="modalConfermaAzione">
 <div class="modal" style="text-align:center;max-width:420px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalConfermaAzione').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 id="confermaTitolo" style="margin-bottom:0.5rem;"></h3>
     <p id="confermaMessaggio" style="color:#475569;"></p>

@@ -890,7 +890,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3>Nuova Proposta — Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="document.getElementById('modal1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -943,7 +942,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3>Nuova Proposta — Gita più Giorni</h3>
-    <button class="close-btn" onclick="document.getElementById('modal5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -995,7 +993,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3 id="org1g_title">Organizza Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="document.getElementById('modalOrg1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -1066,7 +1063,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3 id="org5g_title">Organizza Gita più Giorni</h3>
-    <button class="close-btn" onclick="document.getElementById('modalOrg5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <p style="font-size:0.9rem; color:var(--hex-red); margin-bottom:1rem; text-align:center;">I campi contrassegnati con l'asterisco (*) devono essere compilati obbligatoriamente.</p>
@@ -1132,7 +1128,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3>Modifica Gita 1 Giorno</h3>
-    <button class="close-btn" onclick="document.getElementById('modalMod1g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form method="POST" action="catalogo.php" id="formMod1g">
@@ -1185,7 +1180,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <div class="modal">
 <div class="modal-header">
     <h3>Modifica Gita più Giorni</h3>
-    <button class="close-btn" onclick="document.getElementById('modalMod5g').classList.add('hidden')">&times;</button>
 </div>
 <div class="modal-body">
 <form method="POST" action="catalogo.php" id="formMod5g">
@@ -1235,9 +1229,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <!-- modal: conferma elimina (solo commissione) -->
 <div class="modal-overlay hidden" id="modalElimina">
 <div class="modal" style="max-width:400px;text-align:center;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalElimina').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--hex-red);margin-bottom:0.5rem;">Conferma Eliminazione</h3>
     <p style="color:var(--blue-900);margin-bottom:0.5rem;">Sei sicuro di voler eliminare la gita verso:</p>
@@ -1258,9 +1249,6 @@ if ($gite5g && $gite5g->num_rows > 0) {
 <!-- modal: organizzazione completata -->
 <div class="modal-overlay hidden" id="modalOrganizzaOk">
 <div class="modal" style="text-align:center;max-width:420px;">
-<div class="modal-header" style="justify-content:center;border-bottom:none;padding-bottom:0;">
-    <button class="close-btn" style="position:absolute;right:1rem;top:1rem;" onclick="document.getElementById('modalOrganizzaOk').classList.add('hidden')">&times;</button>
-</div>
 <div class="modal-body" style="padding-top:0.5rem;">
     <h3 style="color:var(--blue-700);margin-bottom:0.5rem;">Gita Organizzata</h3>
     <p style="color:#475569;">La gita e stata messa in organizzazione con successo.</p>
