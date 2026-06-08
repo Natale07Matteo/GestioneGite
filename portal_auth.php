@@ -398,7 +398,7 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
             $cognomeAggiornato = $portaleCognome;
         }
 
-        $stmt = $conn->prepare("UPDATE utente SET Nome = ?, Cognome = ? WHERE IDUtente = ?");
+        $stmt = $conn->prepare("UPDATE utente SET Nome = ?, Cognome = ?, IDTipo = ? WHERE IDUtente = ?");
         if ($stmt === false) {
             echo '<div style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-family: monospace; margin: 10px 0; border-radius: 6px;">';
             echo '<strong>[DEBUG ERROR - portal_auth]</strong> prepare UPDATE fallito: ' . htmlspecialchars($conn->error);
@@ -406,7 +406,7 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
             return false;
         }
 
-        $stmt->bind_param("ssi", $nomeAggiornato, $cognomeAggiornato, $utente['IDUtente']);
+        $stmt->bind_param("ssii", $nomeAggiornato, $cognomeAggiornato, $idTipoLocale, $utente['IDUtente']);
         if (!$stmt->execute()) {
             echo '<div style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-family: monospace; margin: 10px 0; border-radius: 6px;">';
             echo '<strong>[DEBUG ERROR - portal_auth]</strong> execute UPDATE fallito: ' . htmlspecialchars($stmt->error);
@@ -421,7 +421,7 @@ function tentaAutoLogin($conn, $PORTAL_ROLES)
 
         $_SESSION['id_utente'] = $utente['IDUtente'];
         $_SESSION['username']  = $nomeAggiornato . ' ' . $cognomeAggiornato;
-        $_SESSION['ruolo']     = (int) $utente['IDTipo'];
+        $_SESSION['ruolo']     = (int) $idTipoLocale;
         
         $sessionFoto = null;
         if ($portaleFoto) {
