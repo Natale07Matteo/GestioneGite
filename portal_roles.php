@@ -18,6 +18,5 @@
 
 $PORTAL_ROLES = [
     'docente' => 1,
-    // Quando sarà creato il ruolo commissione sul portale, decommentare:
-    // 'commissione' => 2,
+    'commissione' => 2,
 ];
