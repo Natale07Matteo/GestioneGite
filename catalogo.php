@@ -799,7 +799,7 @@ if ($gite1g && $gite1g->num_rows > 0) {
 
 <!-- sezione gite piu giorni -->
 <div id="gite-quinte" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem; scroll-margin-top: 5rem;">
-    <h3 style="color:var(--blue-700);margin:0;">Proposte gite per le quinte</h3>
+    <h3 style="color:#1e3a8a;margin:0;">Proposte gite per le quinte</h3>
     <button class="button" onclick="document.getElementById('modal5g').classList.remove('hidden')">+ Nuova Proposta</button>
 </div>
 

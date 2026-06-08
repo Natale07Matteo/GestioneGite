@@ -468,7 +468,7 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
 </div></div>
 
 <!-- gite piu giorni -->
-<h3 id="gite-quinte" style="color:var(--blue-700);margin:2rem 0 0.75rem;">Gite per le quinte</h3>
+<h3 id="gite-quinte" style="color:#1e3a8a;margin:2rem 0 0.75rem;">Gite per le quinte</h3>
 <div class="table-section"><div class="table-container table-quinte">
 <table>
 <thead><tr>

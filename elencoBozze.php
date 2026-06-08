@@ -241,7 +241,7 @@ if ($bozze1g && $bozze1g->num_rows > 0) {
 </div></div>
 
 <div id="gite-quinte" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem; scroll-margin-top: 5rem;">
-    <h3 style="color:var(--blue-700);margin:0;">Bozze gite per le quinte</h3>
+    <h3 style="color:#1e3a8a;margin:0;">Bozze gite per le quinte</h3>
 </div>
 
 <div class="table-section"><div class="table-container table-quinte">
