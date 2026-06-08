@@ -419,31 +419,41 @@ if ($res1g && mysqli_num_rows($res1g) > 0):
         <td>
             <div class="azioni-cell">
                 <?php if ($riga['idStato'] == 4): ?>
-                <?php if ($isAccompagnatore): ?>
-                    <button type="button" class="button cancel xs" onclick="apriConferma('disiscriviti', <?php echo $id; ?>, 'gita1g', '<?php echo htmlspecialchars($dJ); ?>')">Disiscriviti</button>
-                <?php else: ?>
-                    <button type="button" class="button xs" onclick="apriConferma('partecipa', <?php echo $id; ?>, 'gita1g', '<?php echo htmlspecialchars($dJ); ?>')">Partecipa</button>
-                <?php endif; ?>
-                <?php if ($ruolo == 2): ?>
-                <button type="button" class="button xs"
-                    data-id="<?php echo $id; ?>"
-                    data-dest="<?php echo $dJ; ?>"
-                    data-desc="<?php echo htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : ''); ?>"
-                    data-mezzo="<?php echo htmlspecialchars(isset($riga['mezzo']) ? $riga['mezzo'] : ''); ?>"
-                    data-periodo="<?php echo htmlspecialchars(isset($riga['periodo']) ? $riga['periodo'] : ''); ?>"
-                    data-classi="<?php echo htmlspecialchars(isset($riga['classi']) ? $riga['classi'] : ''); ?>"
-                    data-giorno="<?php echo $giornoV; ?>"
-                    data-costo-mezzo="<?php echo $costoMV; ?>"
-                    data-costo-att="<?php echo $costoAV; ?>"
-                    data-costo-ap="<?php echo $costoPA; ?>"
-                    data-num-alunni="<?php echo $numAl; ?>"
-                    onclick="apriMod1g(this)">Modifica</button>
-                <button type="button" class="button cancel xs"
-                    data-id="<?php echo $id; ?>"
-                    data-dest="<?php echo $dJ; ?>"
-                    data-tab="gita1g"
-                    onclick="apriElimina(this)">Elimina</button>
-                <?php endif; ?>
+                    <?php if ($isAccompagnatore): ?>
+                        <button type="button" class="button cancel xs" onclick="apriConferma('disiscriviti', <?php echo $id; ?>, 'gita1g', '<?php echo htmlspecialchars($dJ); ?>')">Disiscriviti</button>
+                    <?php else: ?>
+                        <button type="button" class="button xs" onclick="apriConferma('partecipa', <?php echo $id; ?>, 'gita1g', '<?php echo htmlspecialchars($dJ); ?>')">Partecipa</button>
+                    <?php endif; ?>
+                    <?php if ($ruolo == 2): ?>
+                        <button type="button" class="button xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-desc="<?php echo htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : ''); ?>"
+                            data-mezzo="<?php echo htmlspecialchars(isset($riga['mezzo']) ? $riga['mezzo'] : ''); ?>"
+                            data-periodo="<?php echo htmlspecialchars(isset($riga['periodo']) ? $riga['periodo'] : ''); ?>"
+                            data-classi="<?php echo htmlspecialchars(isset($riga['classi']) ? $riga['classi'] : ''); ?>"
+                            data-giorno="<?php echo $giornoV; ?>"
+                            data-costo-mezzo="<?php echo $costoMV; ?>"
+                            data-costo-att="<?php echo $costoAV; ?>"
+                            data-costo-ap="<?php echo $costoPA; ?>"
+                            data-num-alunni="<?php echo $numAl; ?>"
+                            onclick="apriMod1g(this)">Modifica</button>
+                        <button type="button" class="button cancel xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-tab="gita1g"
+                            onclick="apriElimina(this)">Elimina</button>
+                    <?php endif; ?>
+                <?php elseif ($riga['idStato'] == 5): ?>
+                    <?php if ($ruolo == 2): ?>
+                        <button type="button" class="button cancel xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-tab="gita1g"
+                            onclick="apriElimina(this)">Elimina</button>
+                    <?php else: ?>
+                        <span style="color:#94a3b8;font-size:0.85rem;">—</span>
+                    <?php endif; ?>
                 <?php else: ?>
                     <span style="color:#94a3b8;font-size:0.85rem;">—</span>
                 <?php endif; ?>
@@ -582,30 +592,40 @@ if ($res5g && mysqli_num_rows($res5g) > 0):
         <td>
             <div class="azioni-cell">
                 <?php if ($riga['idStato'] == 4): ?>
-                <?php if ($isAccompagnatore): ?>
-                    <button type="button" class="button cancel xs" onclick="apriConferma('disiscriviti', <?php echo $id; ?>, 'gite5', '<?php echo htmlspecialchars($dJ); ?>')">Disiscriviti</button>
-                <?php else: ?>
-                    <button type="button" class="button xs" onclick="apriConferma('partecipa', <?php echo $id; ?>, 'gite5', '<?php echo htmlspecialchars($dJ); ?>')">Partecipa</button>
-                <?php endif; ?>
-                <?php if ($ruolo == 2): ?>
-                <button type="button" class="button xs"
-                    data-id="<?php echo $id; ?>"
-                    data-dest="<?php echo $dJ; ?>"
-                    data-desc="<?php echo htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : ''); ?>"
-                    data-mezzo="<?php echo htmlspecialchars(isset($riga['mezzo']) ? $riga['mezzo'] : ''); ?>"
-                    data-periodo="<?php echo htmlspecialchars(isset($riga['periodo']) ? $riga['periodo'] : ''); ?>"
-                    data-classi="<?php echo htmlspecialchars(isset($riga['classi']) ? $riga['classi'] : ''); ?>"
-                    data-gi="<?php echo $giV; ?>"
-                    data-gf="<?php echo $gfV; ?>"
-                    data-costo-ap="<?php echo $costoPA; ?>"
-                    data-num-alunni="<?php echo $numAl; ?>"
-                    onclick="apriMod5g(this)">Modifica</button>
-                <button type="button" class="button cancel xs"
-                    data-id="<?php echo $id; ?>"
-                    data-dest="<?php echo $dJ; ?>"
-                    data-tab="gite5"
-                    onclick="apriElimina(this)">Elimina</button>
-                <?php endif; ?>
+                    <?php if ($isAccompagnatore): ?>
+                        <button type="button" class="button cancel xs" onclick="apriConferma('disiscriviti', <?php echo $id; ?>, 'gite5', '<?php echo htmlspecialchars($dJ); ?>')">Disiscriviti</button>
+                    <?php else: ?>
+                        <button type="button" class="button xs" onclick="apriConferma('partecipa', <?php echo $id; ?>, 'gite5', '<?php echo htmlspecialchars($dJ); ?>')">Partecipa</button>
+                    <?php endif; ?>
+                    <?php if ($ruolo == 2): ?>
+                        <button type="button" class="button xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-desc="<?php echo htmlspecialchars(isset($riga['descrizione']) ? $riga['descrizione'] : ''); ?>"
+                            data-mezzo="<?php echo htmlspecialchars(isset($riga['mezzo']) ? $riga['mezzo'] : ''); ?>"
+                            data-periodo="<?php echo htmlspecialchars(isset($riga['periodo']) ? $riga['periodo'] : ''); ?>"
+                            data-classi="<?php echo htmlspecialchars(isset($riga['classi']) ? $riga['classi'] : ''); ?>"
+                            data-gi="<?php echo $giV; ?>"
+                            data-gf="<?php echo $gfV; ?>"
+                            data-costo-ap="<?php echo $costoPA; ?>"
+                            data-num-alunni="<?php echo $numAl; ?>"
+                            onclick="apriMod5g(this)">Modifica</button>
+                        <button type="button" class="button cancel xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-tab="gite5"
+                            onclick="apriElimina(this)">Elimina</button>
+                    <?php endif; ?>
+                <?php elseif ($riga['idStato'] == 5): ?>
+                    <?php if ($ruolo == 2): ?>
+                        <button type="button" class="button cancel xs"
+                            data-id="<?php echo $id; ?>"
+                            data-dest="<?php echo $dJ; ?>"
+                            data-tab="gite5"
+                            onclick="apriElimina(this)">Elimina</button>
+                    <?php else: ?>
+                        <span style="color:#94a3b8;font-size:0.85rem;">—</span>
+                    <?php endif; ?>
                 <?php else: ?>
                     <span style="color:#94a3b8;font-size:0.85rem;">—</span>
                 <?php endif; ?>
