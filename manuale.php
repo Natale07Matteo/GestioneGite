@@ -242,7 +242,7 @@ include('nav.php');
                 <ul>
                     <li><strong>Modifica:</strong> permette di aggiornare i dati della gita in qualsiasi momento.</li>
                     <li><strong>Partecipa:</strong> consente al docente di iscriversi come accompagnatore della gita.</li>
-                    <li><strong>Partecipanti</strong> (disponibile solo per le gite di quinto anno): permette di inserire manualmente i dati di tutti gli alunni e accompagnatori previsti.</li>
+                    <li><strong>Partecipanti</strong> (disponibile solo per le gite di quinto anno): permette di inserire, modificare e rimuovere i dati di tutti gli alunni e accompagnatori previsti (dati anagrafici, classe, estremi del documento con scadenza e note o allergeni).</li>
                 </ul>
             </section>
 
@@ -271,7 +271,11 @@ include('nav.php');
                         <path d="M480-120q-33 0-56.5-23.5T400-200q0-33 23.5-56.5T480-280q33 0 56.5 23.5T560-200q0 33-23.5 56.5T480-120Zm-80-240v-480h160v480H400Z"/>
                     </svg>
                     <div>
-                        <strong>Nota:</strong> La sezione <strong>"Bozze"</strong> nel menu di navigazione è visibile esclusivamente ai docenti con ruolo di <strong>Commissione</strong>. I docenti con ruolo standard non dispongono dell'accesso a questa area.
+                        <strong>Funzioni Commissione:</strong> I docenti con ruolo di <strong>Commissione</strong> hanno permessi di gestione aggiuntivi:
+                        <ul>
+                            <li>La sezione <strong>"Bozze"</strong> nel menu di navigazione è visibile esclusivamente a loro per approvare o bocciare le proposte (con obbligo di motivazione).</li>
+                            <li>Nella pagina <strong>"In Programma"</strong>, possono eliminare definitivamente le gite nello stato <em>Conclusa</em> tramite un'azione di conferma protetta da popup.</li>
+                        </ul>
                     </div>
                 </div>
             </section>
