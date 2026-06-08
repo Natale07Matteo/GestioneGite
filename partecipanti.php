@@ -126,6 +126,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
+// modifica partecipante
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'mod_part') {
+    $pId = 0;
+    if (isset($_POST['part_id'])) { $pId = (int)$_POST['part_id']; }
+    
+    $nome = '';
+    if (isset($_POST['nome'])) { $nome = mysqli_real_escape_string($conn, trim($_POST['nome'])); }
+    
+    $cognome = '';
+    if (isset($_POST['cognome'])) { $cognome = mysqli_real_escape_string($conn, trim($_POST['cognome'])); }
+    
+    $classe = '';
+    if (isset($_POST['classe'])) { $classe = mysqli_real_escape_string($conn, trim($_POST['classe'])); }
+    
+    $note = '';
+    if (isset($_POST['note'])) { $note = mysqli_real_escape_string($conn, trim($_POST['note'])); }
+    
+    $documento = '';
+    if (isset($_POST['documento'])) { $documento = mysqli_real_escape_string($conn, trim($_POST['documento'])); }
+    
+    $nDoc = '';
+    if (isset($_POST['nDocumento'])) { $nDoc = mysqli_real_escape_string($conn, trim($_POST['nDocumento'])); }
+    
+    $scadenza = '';
+    if (isset($_POST['scadenza'])) { $scadenza = trim($_POST['scadenza']); }
+    
+    $scadenza_s = "NULL";
+    if ($scadenza) {
+        $scadenza_s = "'$scadenza'";
+    }
+
+    $nDocCleaned = strtoupper(str_replace([' ', '-'], '', $nDoc));
+    $today = date('Y-m-d');
+
+    if ($pId > 0 && $nome !== '' && $cognome !== '' && $classe !== '' && $documento !== '' && $nDoc !== '' && $scadenza !== '') {
+        if ($scadenza < $today) {
+            header("Location: partecipanti.php?id=$idGita&err_part=scaduto");
+            exit;
+        } elseif (!preg_match('/^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/', $nDocCleaned)) {
+            header("Location: partecipanti.php?id=$idGita&err_part=formato");
+            exit;
+        } else {
+            $sql = "UPDATE partecipanti SET nome='$nome', cognome='$cognome', classe='$classe', descrizione='$note', documento='$documento', nDocumento='$nDocCleaned', scadenza=$scadenza_s WHERE id=$pId AND idgita=$idGita";
+            if (mysqli_query($conn, $sql)) {
+                header("Location: partecipanti.php?id=$idGita&part_mod=1");
+                exit;
+            } else {
+                header("Location: partecipanti.php?id=$idGita&err_part=errore");
+                exit;
+            }
+        }
+    } else {
+        header("Location: partecipanti.php?id=$idGita&err_part=campi");
+        exit;
+    }
+}
+
 // modifica dati accompagnatore
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'mod_acc') {
     $accId = 0;
@@ -246,6 +303,20 @@ if (isset($gita['numAlunni'])) {
         <?php if ($classiDisp): ?><span style="font-size:0.9rem;"><strong>Classi:</strong> <?php echo $classiDisp; ?></span><?php endif; ?>
         <?php if ($numAlunniDisp !== ''): ?><span style="font-size:0.9rem;"><strong>Alunni previsti:</strong> <?php echo $numAlunniDisp; ?></span><?php endif; ?>
     </div>
+
+    <?php if (isset($_GET['part_mod']) && $_GET['part_mod'] === '1'): ?>
+        <div class="alert alert-success" style="margin-bottom:1rem;">Dati partecipante modificati con successo.</div>
+    <?php elseif (isset($_GET['err_part'])): ?>
+        <?php if ($_GET['err_part'] === 'scaduto'): ?>
+            <div class="alert alert-error" style="margin-bottom:1rem;">La data di scadenza del documento deve essere nel futuro.</div>
+        <?php elseif ($_GET['err_part'] === 'formato'): ?>
+            <div class="alert alert-error" style="margin-bottom:1rem;">Il formato del numero di documento non è valido (es. CA12345AA o AB1234567).</div>
+        <?php elseif ($_GET['err_part'] === 'campi'): ?>
+            <div class="alert alert-warning" style="margin-bottom:1rem;">Compila tutti i campi obbligatori per il partecipante.</div>
+        <?php elseif ($_GET['err_part'] === 'errore'): ?>
+            <div class="alert alert-error" style="margin-bottom:1rem;">Errore durante la modifica del partecipante.</div>
+        <?php endif; ?>
+    <?php endif; ?>
 
     <?php if (isset($_GET['acc']) && $_GET['acc'] === '1'): ?>
         <div class="alert alert-success" style="margin-bottom:1rem;">Dati accompagnatore aggiornati.</div>
@@ -458,6 +529,16 @@ if (isset($gita['numAlunni'])) {
                         <td><?php echo $outPNote; ?></td>
                         <td>
                             <div class="azioni-cell">
+                                <button type="button" class="button xs"
+                                    data-part-id="<?php echo $pId; ?>"
+                                    data-nome="<?php echo $pNome; ?>"
+                                    data-cognome="<?php echo $pCognome; ?>"
+                                    data-classe="<?php echo $pClasse; ?>"
+                                    data-doc="<?php echo $pDoc; ?>"
+                                    data-ndoc="<?php echo $pNDoc; ?>"
+                                    data-scad="<?php echo $p['scadenza']; ?>"
+                                    data-note="<?php echo $pNote; ?>"
+                                    onclick="apriModPart(this)">Modifica</button>
                                 <button type="button" class="button cancel xs" onclick="apriRimuoviPart(<?php echo $pId; ?>, '<?php echo addslashes($pNome . ' ' . $pCognome); ?>')">Rimuovi</button>
                             </div>
                         </td>
@@ -577,6 +658,71 @@ if (isset($gita['numAlunni'])) {
 </div>
 </div>
 
+<!-- modal: modifica partecipante -->
+<div class="modal-overlay hidden" id="modalModPart">
+<div class="modal wide-modal">
+<div class="modal-header">
+    <h3>Modifica Partecipante</h3>
+</div>
+<div class="modal-body">
+<form id="formModPart" method="POST" action="partecipanti.php?id=<?php echo $idGita; ?>">
+    <input type="hidden" name="action" value="mod_part">
+    <input type="hidden" name="part_id" id="modPartId">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Nome *</label>
+            <input type="text" name="nome" id="modPartNome" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Cognome *</label>
+            <input type="text" name="cognome" id="modPartCognome" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Classe *</label>
+            <select name="classe" id="modPartClasse" class="form-control" required>
+                <option value="">— Seleziona —</option>
+                <option value="5AII">5AII</option>
+                <option value="5BII">5BII</option>
+                <option value="5CII">5CII</option>
+                <option value="5DIT">5DIT</option>
+                <option value="5AEA">5AEA</option>
+                <option value="5BEA">5BEA</option>
+                <option value="5CEA">5CEA</option>
+                <option value="5AL">5AL</option>
+                <option value="5BL">5BL</option>
+                <option value="5CL">5CL</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Tipo documento *</label>
+            <select name="documento" id="modPartDoc" class="form-control" required>
+                <option value="">— Seleziona —</option>
+                <option value="Carta d'identita">Carta d'identità</option>
+                <option value="Passaporto">Passaporto</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>N. Documento *</label>
+            <input type="text" name="nDocumento" id="modPartNDoc" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Scadenza documento *</label>
+            <input type="date" name="scadenza" id="modPartScad" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Allergeni / Note (facoltativo)</label>
+            <input type="text" name="note" id="modPartNote" class="form-control">
+        </div>
+    </div>
+</form>
+</div>
+<div class="modal-footer">
+    <button class="button cancel" onclick="document.getElementById('modalModPart').classList.add('hidden')">Annulla</button>
+    <button class="button" type="submit" form="formModPart">Salva</button>
+</div>
+</div>
+</div>
+
 <!-- modal: conferma rimozione accompagnatore -->
 <div class="modal-overlay hidden" id="modalRimuoviAcc">
 <div class="modal" style="max-width:400px;text-align:center;">
@@ -626,6 +772,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form modifica
     var scadModAcc = document.getElementById('modAccScad');
     if (scadModAcc) scadModAcc.min = todayStr;
+    // Form modifica partecipante
+    var scadModPart = document.getElementById('modPartScad');
+    if (scadModPart) scadModPart.min = todayStr;
 });
 
 // Validazione client-side form Aggiungi
@@ -695,7 +844,7 @@ function apriModAcc(btn) {
 }
 
 window.addEventListener('click', function(e) {
-    ['modalAggiungi','modalModAcc','modalRimuoviPart','modalRimuoviAcc'].forEach(function(id) {
+    ['modalAggiungi','modalModAcc','modalRimuoviPart','modalRimuoviAcc','modalModPart'].forEach(function(id) {
         var m = document.getElementById(id);
         if (e.target === m) m.classList.add('hidden');
     });
@@ -712,6 +861,44 @@ function apriRimuoviPart(id, nome) {
     document.getElementById('rimuoviPartNome').textContent = nome;
     document.getElementById('modalRimuoviPart').classList.remove('hidden');
 }
+
+function apriModPart(btn) {
+    var d = btn.dataset;
+    document.getElementById('modPartId').value = d.partId;
+    document.getElementById('modPartNome').value = d.nome || '';
+    document.getElementById('modPartCognome').value = d.cognome || '';
+    document.getElementById('modPartClasse').value = d.classe || '';
+    document.getElementById('modPartDoc').value = d.doc || '';
+    document.getElementById('modPartNDoc').value = d.ndoc || '';
+    document.getElementById('modPartScad').value = d.scad || '';
+    document.getElementById('modPartNote').value = d.note || '';
+    document.getElementById('modalModPart').classList.remove('hidden');
+}
+
+// Validazione client-side form Modifica Partecipante
+document.getElementById('formModPart').addEventListener('submit', function(e) {
+    var nDocInput = document.getElementById('modPartNDoc');
+    var scadInput = document.getElementById('modPartScad');
+    
+    var nDocVal = nDocInput.value.replace(/[\s-]/g, '').toUpperCase();
+    nDocInput.value = nDocVal;
+    
+    var docRegex = /^([A-Z]{2}\d{5}[A-Z]{2}|[A-Z]{2}\d{7})$/;
+    if (!docRegex.test(nDocVal)) {
+        alert("Il numero di documento inserito non è valido.\nFormati consentiti:\n- CIE (es. CA12345AA)\n- Cartaceo/Passaporto (es. AB1234567)");
+        nDocInput.focus();
+        e.preventDefault();
+        return false;
+    }
+    
+    var todayStr = new Date().toISOString().split('T')[0];
+    if (scadInput.value < todayStr) {
+        alert("La data di scadenza del documento deve essere nel futuro.");
+        scadInput.focus();
+        e.preventDefault();
+        return false;
+    }
+});
 <?php if ($messaggio === 'campi' || $messaggio === 'error' || $messaggio === 'scaduto' || $messaggio === 'formato'): ?>
 document.getElementById('modalAggiungi').classList.remove('hidden');
 <?php endif; ?>
