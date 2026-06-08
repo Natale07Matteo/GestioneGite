@@ -19,4 +19,5 @@
 $PORTAL_ROLES = [
     'docente' => 1,
     'commissione' => 2,
+    'commisione' => 2, // Aggiunto per tollerare il typo sul Portale
 ];
