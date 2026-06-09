@@ -150,7 +150,7 @@
         <h2 style="margin:0;">Gestione Gite</h2>
     </div>
     
-    <nav class="header-nav">
+    <nav class="header-nav" id="mobileNav">
         <a href="index.php" class="<?php echo $active_index; ?>">Home</a>
         
         <?php if ($ruolo): ?>
@@ -167,7 +167,7 @@
         <?php endif; ?>
     </nav>
 
-    <div class="header-container header-right" style="flex: 1; flex-basis: 0; position: relative;">
+    <div class="header-container header-right" style="flex: 1; flex-basis: 0; position: relative; gap: 1rem;">
         <?php if ($ruolo): ?>
             <div class="profile-container" id="pulsanteProfilo" onclick="toggleMenuTendina(event)">
                 <?php if ($foto_utente): ?>
@@ -209,6 +209,10 @@
                 </a>
             </div>
         <?php endif; ?>
+        
+        <button class="hamburger-btn" id="mobileMenuBtn" aria-label="Menu" onclick="document.getElementById('mobileNav').classList.toggle('open')" style="display: none;">
+            <svg viewBox="0 -960 960 960" fill="white" width="30" height="30"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+        </button>
     </div>
 </header>
 
